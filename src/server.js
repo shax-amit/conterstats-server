@@ -1,15 +1,15 @@
-import express from "express";
+import express  from "express";
 import mongoose from "mongoose";
-import routes from "./routes/index.js";
+import routes   from "./routes/index.js";
 import { PORT, MONGO_URI } from "./config.js";
 
 const app = express();
 
-/* ✨  Mongo connection  */
+/* ✨  Mongo connection */
 mongoose
-  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(MONGO_URI)
   .then(() => console.log("✅ Mongo connected"))
-  .catch((err) => console.error("Mongo error", err));
+  .catch(err  => console.error("Mongo error", err));
 
 app.use(express.json());
 app.use("/", routes);
