@@ -2,8 +2,11 @@
   "name": "conterstats-server",
   "version": "1.0.0",
   "description": "Node/Express API for ConterStats",
-  "main": "index.js",
+  "type": "module",
+  "main": "src/server.js",
   "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -16,5 +19,14 @@
   "bugs": {
     "url": "https://github.com/shax-amit/conterstats-server/issues"
   },
-  "homepage": "https://github.com/shax-amit/conterstats-server#readme"
+  "homepage": "https://github.com/shax-amit/conterstats-server#readme",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
 }
