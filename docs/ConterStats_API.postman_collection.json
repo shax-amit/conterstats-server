@@ -1,0 +1,92 @@
+{
+	"info": {
+		"_postman_id": "66cc87ca-7ee9-4899-b07a-47821531dc01",
+		"name": "ConterStats API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45212191",
+		"_collection_link": "https://shax-3020865.postman.co/workspace/71290906-7be6-41b4-84a3-0ebb7fe476ae/collection/45212191-66cc87ca-7ee9-4899-b07a-47821531dc01?action=share&source=collection_link&creator=45212191"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/health",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/items",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/items/68641415b389d3f6746c0b16",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"items",
+						"68641415b389d3f6746c0b16"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:4000/api",
+			"type": "string"
+		}
+	]
+}
