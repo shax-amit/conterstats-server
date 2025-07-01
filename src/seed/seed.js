@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import { MONGO_URI } from "../config.js";
-import { Item } from "../models/index.js";
+import Item from "../models/item.js";
 
 const sampleItems = [
   { name: "AK-47 | Redline",    category: "Rifle",  condition: "FT", price: 12.5, units_in_stock: 50 },
