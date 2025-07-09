@@ -5,6 +5,7 @@ import { JWT_SECRET } from "../config.js";
 
 const jwtOpts = { expiresIn: "7d" };
 
+// ---------- REGISTER ----------
 export async function register(req, res) {
   const { first_name, last_name, email, password, phone } = req.body;
 
@@ -14,18 +15,27 @@ export async function register(req, res) {
   }
 
   const hash = await bcrypt.hash(password, 12);
+
   const user = await User.create({
     first_name,
     last_name,
     email,
     phone,
     password: hash,
+    // role נשאר ברירת־מחדל "customer" לפי ה-schema
   });
 
-  const token = jwt.sign({ id: user._id, email }, JWT_SECRET, jwtOpts);
+  /* 🔄  החתימה כוללת גם role */
+  const token = jwt.sign(
+    { id: user._id, email, role: user.role },
+    JWT_SECRET,
+    jwtOpts
+  );
+
   res.status(201).json({ token });
 }
 
+// ---------- LOGIN ----------
 export async function login(req, res) {
   const { email, password } = req.body;
 
@@ -39,6 +49,12 @@ export async function login(req, res) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  const token = jwt.sign({ id: user._id, email }, JWT_SECRET, jwtOpts);
+  /* 🔄  גם כאן מוסיפים role */
+  const token = jwt.sign(
+    { id: user._id, email, role: user.role },
+    JWT_SECRET,
+    jwtOpts
+  );
+
   res.json({ token });
 }

@@ -1,3 +1,4 @@
+// seed/items.js
 import mongoose from "mongoose";
 import { MONGO_URI } from "../config.js";
 import Item from "../models/item.js";
@@ -10,7 +11,7 @@ const sampleItems = [
 
 (async () => {
   await mongoose.connect(MONGO_URI);
-  console.log("Connected for seeding");
+  console.log("Mongo connected – seeding items");
 
   await Item.deleteMany({});
   await Item.insertMany(sampleItems);

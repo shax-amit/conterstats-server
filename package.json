@@ -5,13 +5,17 @@
   "type": "module",
   "main": "src/server.js",
 
-  "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
-    "seed": "node src/seed/seed.js",
-    "test": "echo \"No tests yet\"",
-    "lint": "eslint ."
-  },
+"scripts": {
+  "dev":        "nodemon src/server.js",
+  "start":      "node src/server.js",
+
+  "seed:items": "node src/seed/items.js",
+  "seed:users": "node src/seed/users.js",
+  "seed:all":   "npm run seed:items && npm run seed:users",
+
+  "test":       "echo \"No tests yet\"",
+  "lint":       "eslint ."
+},
 
   "repository": {
     "type": "git",

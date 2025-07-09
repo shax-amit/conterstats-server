@@ -2,6 +2,9 @@ import express  from "express";
 import mongoose from "mongoose";
 import routes   from "./routes/index.js";
 import { PORT, MONGO_URI } from "./config.js";
+import notFound     from "./middleware/notFound.js";
+import errorHandler from "./middleware/errorHandler.js";
+
 
 const app = express();
 
@@ -15,6 +18,10 @@ app.use(express.json());
 
 
 app.use("/api", routes);
+
+app.use(notFound);      // 404 לכל נתיב שלא קיים
+app.use(errorHandler);  // error-handler גלובלי
+
 
 
 app.get("/", (_req, res) =>
