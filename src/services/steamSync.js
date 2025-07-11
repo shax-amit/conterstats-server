@@ -1,9 +1,7 @@
 // src/services/steamSync.js
-// cSpell:disable
-
-import cron  from "node-cron";  // מתזמן משימות
-import axios from "axios";      // שליחת HTTP request
-import Item  from "../models/item.js";  // מודל הפריטים שלנו
+import cron  from "node-cron";
+import axios from "axios";
+import Item  from "../models/item.js";
 
 // מפת תרגום של קודי מצב לשם מלא כפי ש-Steam מצפה
 const CONDITION_MAP = {
@@ -14,11 +12,20 @@ const CONDITION_MAP = {
   BS: "Battle-Scarred",
 };
 
-// 1. קריאה ל־.env עבור תזמון Cron (או ברירת־מחדל)
+// Cron schedule מ-.env (ברירת-מחדל כל 6 שעות בדקה ה-5 UTC)
 const { SYNC_INTERVAL_CRON = "5 */6 * * *" } = process.env;
-console.log(`[steamSync] schedule "${SYNC_INTERVAL_CRON}"`);
+// TTL-On-Demand ב-דקות (ברירת-מחדל 15 דקות)
+const rawTtl = parseInt(process.env.SYNC_TTL_MINUTES, 10);
+const TTL_MINUTES = Number.isNaN(rawTtl) ? 15 : rawTtl;
 
-// 2. פונקציה לשליפת המחיר מ-Steam Community
+
+let lastSyncAt = 0;  // timestamp (ms) של הסנכרון האחרון
+
+console.log(
+  `[steamSync] schedule "${SYNC_INTERVAL_CRON}", TTL-On-Demand = ${TTL_MINUTES} min`
+);
+
+// הפונקציה שקוראת מחירים מ-Steam
 async function fetchPriceFromSteam(marketName) {
   const url    = "https://steamcommunity.com/market/priceoverview/";
   const params = {
@@ -28,7 +35,9 @@ async function fetchPriceFromSteam(marketName) {
   };
   const headers = {
     Accept:  "application/json",
-    Referer: `https://steamcommunity.com/market/listings/730/${encodeURIComponent(marketName)}`,
+    Referer: `https://steamcommunity.com/market/listings/730/${encodeURIComponent(
+      marketName
+    )}`,
   };
 
   const { data } = await axios.get(url, { params, headers, timeout: 10000 });
@@ -39,27 +48,23 @@ async function fetchPriceFromSteam(marketName) {
   return null;
 }
 
-// 3. הפונקציה שמריצה את הסנכרון על כל הפריטים
+// פונקציית הסנכרון המלאה
 async function runSync() {
   console.log("[steamSync] sync started");
-
-  // מושכים name, condition ו-price
   const items = await Item.find().select("name condition price");
   if (items.length === 0) {
-    console.warn("[steamSync] no items found in DB – did you run `npm run seed:all`?");
+    console.warn(
+      "[steamSync] no items found in DB – did you run `npm run seed:all`?"
+    );
   }
 
   for (const it of items) {
-    // בונים את השם המלא עם המצב
     const condText   = CONDITION_MAP[it.condition] || it.condition;
     const marketName = `${it.name} (${condText})`;
-
     console.log(`  ↪ fetching price for: "${marketName}" (DB price = $${it.price})`);
-
     try {
       const price = await fetchPriceFromSteam(marketName);
       console.log(`       fetched Steam price = ${price === null ? "n/a" : "$" + price}`);
-
       if (price !== null && price !== it.price) {
         it.price = price;
         await it.save();
@@ -70,11 +75,21 @@ async function runSync() {
     }
   }
 
+  lastSyncAt = Date.now();
   console.log("[steamSync] sync finished");
 }
 
-// 4. רישום המשימה ב-cron
+// Cron: רישום הסנכרון הקבוע
 cron.schedule(SYNC_INTERVAL_CRON, runSync, { timezone: "UTC" });
 
-// 5. ייצוא runSync לקריאה ידנית אם צריך
-export { runSync };
+// פונקציה ל-TTL-On-Demand
+async function syncSkinsIfNeeded() {
+  const ageMinutes = (Date.now() - lastSyncAt) / 1000 / 60;
+  if (ageMinutes >= TTL_MINUTES) {
+    // לא ממתינים לתוצאה כאן: ירוץ ברקע
+    runSync().catch((err) => console.error("[steamSync] on-demand error:", err));
+  }
+}
+
+// ייצוא
+export { runSync, syncSkinsIfNeeded };
