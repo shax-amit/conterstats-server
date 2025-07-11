@@ -14,3 +14,7 @@ cp .env.example .env          # edit the values
 npm run seed:all              # seed items + users (admin + customer)
 npm run dev                   # http://localhost:4000/api/health
 ```
+
+### 📊 Architecture Overview
+
+![Architecture](docs/UML/architecture.png)
