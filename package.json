@@ -4,38 +4,36 @@
   "description": "Node/Express + MongoDB API for ConterStats",
   "type": "module",
   "main": "src/server.js",
-
-"scripts": {
-  "dev":        "nodemon src/server.js",
-  "start":      "node src/server.js",
-
-  "seed:items": "node src/seed/items.js",
-  "seed:users": "node src/seed/users.js",
-  "seed:all":   "npm run seed:items && npm run seed:users",
-
-  "test":       "echo \"No tests yet\"",
-  "lint":       "eslint ."
-},
-
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "start": "node src/server.js",
+    "seed:items": "node src/seed/items.js",
+    "seed:users": "node src/seed/users.js",
+    "seed:all": "npm run seed:items && npm run seed:users",
+    "test": "cross-env NODE_ENV=test NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "lint": "eslint ."
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/shax-amit/conterstats-server.git"
   },
-
   "author": "Amit Sacks",
   "license": "MIT",
-
   "dependencies": {
-    "dotenv": "^17.0.0",
-    "express": "^5.1.0",
-    "mongoose": "^8.3.1",
-    "jsonwebtoken": "^9.0.2",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.3.1",
     "morgan": "^1.10.0"
   },
-
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "@types/jest": "^30.0.0",
+    "cross-env": "^7.0.3",
+    "jest": "^30.0.4",
+    "mongodb-memory-server": "^10.1.4",
+    "nodemon": "^3.1.10",
+    "supertest": "^7.1.3"
   }
 }
