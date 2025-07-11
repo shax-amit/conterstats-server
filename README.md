@@ -17,4 +17,4 @@ npm run dev                   # http://localhost:4000/api/health
 
 ### 📊 Architecture Overview
 
-![Architecture](conterstats-server/docs/UML/architecture.png)
+![Architecture](docs/uml/architecture.png)
