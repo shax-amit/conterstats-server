@@ -1,4 +1,6 @@
-/* ---------- src/server.js (גרסה חדשה) ---------- */
+
+import 'dotenv/config';              // ← טען את ה-.env לפני כל השאר
+
 import app, { connectDB } from "./app.js";
 import { PORT } from "./config.js";
 

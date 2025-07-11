@@ -1,5 +1,6 @@
 import express  from "express";
 import mongoose from "mongoose";
+import "./services/steamSync.js"; 
 import routes   from "./routes/index.js";
 import { MONGO_URI } from "./config.js";
 import notFound     from "./middleware/notFound.js";
