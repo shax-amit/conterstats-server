@@ -37,24 +37,40 @@ export async function register(req, res) {
 
 // ---------- LOGIN ----------
 export async function login(req, res) {
-  const { email, password } = req.body;
+  const { email, password } = req.body || {};
 
+  // בדיקת קלט בסיסית
+  if (!email || !password) {
+    return res.status(400).json({ error: "Missing email or password" });
+  }
+
+  // חיפוש משתמש במסד הנתונים (כולל סיסמה)
   const user = await User.findOne({ email }).select("+password");
-  if (!user) {
+  if (!user || !user.password) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
+  // השוואת סיסמה
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
     return res.status(401).json({ error: "Invalid credentials" });
   }
 
-  /* 🔄  גם כאן מוסיפים role */
+  // יצירת טוקן עם id + email + role
   const token = jwt.sign(
-    { id: user._id, email, role: user.role },
+    { id: user._id, email: user.email, role: user.role },
     JWT_SECRET,
     jwtOpts
   );
 
-  res.json({ token });
+  // שליחת טוקן ופרטי משתמש
+  res.status(200).json({
+    message: "Login successful",
+    token,
+    user: {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+    },
+  });
 }
