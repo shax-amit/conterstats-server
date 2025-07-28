@@ -1,45 +1,208 @@
-const container = document.getElementById("wishlistItems");
+// Wishlist functionality
+class WishlistManager {
+  constructor() {
+    this.wishlistItems = [];
+    this.init();
+  }
 
-// שליפת הנתונים מה־localStorage
-const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  async init() {
+    await this.loadWishlist();
+    this.setupEventListeners();
+  }
 
-// פונקציה להצגת פריטים בדף
-function renderWishlist(items) {
-  container.innerHTML = "";
+  async loadWishlist() {
+    const loadingEl = document.getElementById('loading');
+    const errorEl = document.getElementById('error');
+    const itemsEl = document.getElementById('wishlist-items');
+    const emptyEl = document.getElementById('empty-wishlist');
+    const actionsEl = document.getElementById('wishlist-actions');
 
-  items.forEach((item) => {
-    const section = document.createElement("section");
-    section.className = "wishlist-row";
-    section.dataset.name = item.name;
-    section.dataset.price = item.price;
-    section.dataset.condition = item.condition;
+    try {
+      loadingEl.classList.remove('hidden');
+      errorEl.classList.add('hidden');
 
-    section.innerHTML = `
-      <span>${item.name}</span>
-      <img src="${item.imageUrl || `assets/icons/${item.category || 'knife'}.png`}" 
-           alt="${item.name}" 
-           style="width: 40px" />
-      <span>${item.price}$</span>
-      <span>added to wishlist</span>
-      <span class="condition-tag">${item.condition}</span>
-      <button class="remove-btn" style="margin-left: 1rem;">🗑️</button>
-    `;
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('Please login to view your wishlist');
+      }
 
-    const removeBtn = section.querySelector(".remove-btn");
-    removeBtn.addEventListener("click", () => {
-      removeFromWishlist(item._id);
+      const response = await fetch('/api/wishlist', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error('Please login to view your wishlist');
+        }
+        throw new Error('Failed to load wishlist');
+      }
+
+      this.wishlistItems = await response.json();
+      this.renderWishlist();
+
+    } catch (error) {
+      errorEl.textContent = error.message;
+      errorEl.classList.remove('hidden');
+      itemsEl.classList.add('hidden');
+    } finally {
+      loadingEl.classList.add('hidden');
+    }
+  }
+
+  renderWishlist() {
+    const itemsEl = document.getElementById('wishlist-items');
+    const emptyEl = document.getElementById('empty-wishlist');
+    const actionsEl = document.getElementById('wishlist-actions');
+
+    if (this.wishlistItems.length === 0) {
+      itemsEl.classList.add('hidden');
+      emptyEl.classList.remove('hidden');
+      actionsEl.classList.add('hidden');
+      return;
+    }
+
+    itemsEl.classList.remove('hidden');
+    emptyEl.classList.add('hidden');
+    actionsEl.classList.remove('hidden');
+
+    itemsEl.innerHTML = this.wishlistItems.map(item => `
+      <div class="wishlist-item" data-id="${item._id}">
+        <div class="item-info">
+          <h3>${item.name}</h3>
+          <p class="category">${item.category}</p>
+          <p class="price">$${item.price || 'N/A'}</p>
+        </div>
+        <div class="item-actions">
+          <button class="remove-btn" onclick="wishlistManager.removeItem('${item._id}')">
+            Remove
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  async removeItem(itemId) {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`/api/wishlist/${itemId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to remove item from wishlist');
+      }
+
+      // Remove from local array and re-render
+      this.wishlistItems = this.wishlistItems.filter(item => item._id !== itemId);
+      this.renderWishlist();
+      
+      this.showMessage('Item removed from wishlist', 'success');
+
+    } catch (error) {
+      this.showMessage(error.message, 'error');
+    }
+  }
+
+  async createOrderFromWishlist() {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          items: this.wishlistItems.map(item => ({
+            itemId: item._id,
+            quantity: 1
+          }))
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      const order = await response.json();
+      this.showMessage('Order created successfully!', 'success');
+      
+      // Clear wishlist after successful order
+      this.wishlistItems = [];
+      this.renderWishlist();
+
+      // Redirect to orders page
+      setTimeout(() => {
+        window.location.href = 'orders.html';
+      }, 2000);
+
+    } catch (error) {
+      this.showMessage(error.message, 'error');
+    }
+  }
+
+  async clearWishlist() {
+    if (!confirm('Are you sure you want to clear your entire wishlist?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch('/api/wishlist', {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear wishlist');
+      }
+
+      this.wishlistItems = [];
+      this.renderWishlist();
+      this.showMessage('Wishlist cleared successfully', 'success');
+
+    } catch (error) {
+      this.showMessage(error.message, 'error');
+    }
+  }
+
+  setupEventListeners() {
+    document.getElementById('create-order-btn').addEventListener('click', () => {
+      this.createOrderFromWishlist();
     });
 
-    container.appendChild(section);
-  });
+    document.getElementById('clear-wishlist-btn').addEventListener('click', () => {
+      this.clearWishlist();
+    });
+  }
+
+  showMessage(message, type = 'info') {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        document.body.removeChild(toast);
+      }, 300);
+    }, 3000);
+  }
 }
 
-// הסרה מה־wishlist לפי ID
-function removeFromWishlist(id) {
-  const updated = wishlist.filter((item) => item._id !== id);
-  localStorage.setItem("wishlist", JSON.stringify(updated));
-  renderWishlist(updated);
-}
-
-// התחלה
-renderWishlist(wishlist);
+// Initialize wishlist manager
+const wishlistManager = new WishlistManager();

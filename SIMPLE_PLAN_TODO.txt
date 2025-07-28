@@ -1,0 +1,106 @@
+SIMPLE PLAN - CounterStats Project
+==================================
+
+Based on existing TODOS.TXT priorities and current state
+
+CURRENT ISSUES TO FIX:
+======================
+
+1. TYPOS (Quick fixes):
+   - "web progects" → "web projects"
+   - "conterstats" → "counterstats"
+   - "Conterstates" → "CounterStats" (in HTML titles)
+
+2. CRITICAL MISSING PAGES:
+   - wishlist.html (404 error - needs to be created)
+   - orders.html (completely missing)
+
+CORE FEATURES TO IMPLEMENT:
+===========================
+
+1. FRONTEND REFACTOR (Priority 1):
+   - HOME PAGE (index.html) - ✅ Working, needs polish
+   - LOGIN (login.html) - ✅ Working, needs validation
+   - REGISTER (register.html) - ✅ Working, needs validation
+   - INVENTORY PAGE (inventory.html) - ✅ Working, needs enhancement
+
+2. MISSING PAGES (Priority 2):
+   - WISHLIST PAGE (wishlist.html) - ❌ 404 Error
+     * Create wishlist.html
+     * GET wishlist items
+     * DELETE wishlist items
+     * POST new wishlist items
+   
+   - ORDERS PAGE (orders.html) - ❌ Missing entirely
+     * Create orders.html
+     * GET user orders
+     * DELETE orders
+     * Create orders from wishlist
+
+3. ADMIN PAGES (Priority 3):
+   - USERS PAGE (users.html) - ✅ Working, needs enhancement
+     * GET all users (admin only)
+     * DELETE users (admin only)
+
+4. BACKEND ROUTES NEEDED:
+   - /orders (GET, POST, DELETE)
+   - /wishlist (GET, POST, DELETE) - ✅ Exists
+   - /users (GET, DELETE) - ✅ Exists
+
+IMPLEMENTATION STEPS:
+=====================
+
+STEP 1: Fix Basic Issues (1-2 hours)
+- Fix typos in codebase
+- Fix "Conterstates" → "CounterStats" in HTML titles
+- Test all existing pages work
+
+STEP 2: Create Wishlist Page (2-3 hours)
+- Create wishlist.html file
+- Add wishlist display functionality
+- Add/remove items from wishlist
+- Test wishlist API integration
+
+STEP 3: Create Orders Page (3-4 hours)
+- Create orders.html file
+- Create orders backend routes
+- Display user order history
+- Create orders from wishlist functionality
+
+STEP 4: Enhance Existing Pages (2-3 hours)
+- Add proper error handling
+- Add loading states
+- Improve form validation
+- Add success/error messages
+
+STEP 5: Polish & Test (1-2 hours)
+- Test all CRUD operations
+- Fix any bugs
+- Ensure responsive design
+- Test user flows
+
+TOTAL ESTIMATED TIME: 9-14 hours
+
+FILES TO CREATE/MODIFY:
+=======================
+
+CREATE:
+- src/public/wishlist.html
+- src/public/orders.html
+- src/routes/orders.js
+
+MODIFY:
+- src/public/index.html (fix title)
+- src/public/login.html (fix title)
+- src/public/register.html (fix title)
+- src/public/inventory.html (fix title)
+- src/public/users.html (fix title)
+- src/routes/index.js (add orders route)
+
+TEST:
+- All existing functionality
+- New wishlist page
+- New orders page
+- Admin user management
+
+This plan focuses on the essential missing features while keeping the existing structure intact. 
