@@ -13,13 +13,8 @@ const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const clientPath = path.join(__dirname, "..", "..", "conterstats-client");
-app.use(express.static(clientPath)); // ✅ שרת סטטי
-
-// Serve index.html at root
-app.get('/', (req, res) => {
-  res.sendFile(path.join(clientPath, 'index.html'));
-});
+const publicPath = path.join(__dirname, "public");
+app.use(express.static(publicPath)); // ✅ Serve static files from 'public'
 
 app.use(cors());
 app.use(express.json());

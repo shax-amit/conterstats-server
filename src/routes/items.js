@@ -23,6 +23,10 @@ r.get("/", async (req, res, next) => {
   try {
     // יריץ ב-background אם עבר יותר מ-TTL דקות
     syncSkinsIfNeeded();
+    // Check for category query param
+    if (req.query.category) {
+      req.category = req.query.category;
+    }
     // שולף ומחזיר מיידית
     await getAll(req, res);
   } catch (err) {

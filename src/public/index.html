@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CounterStats | Home</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <section id="header">
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>Conterstates</h1>
+        </section>
+        <section class="header-right">
+          <a href="index.html" class="header-button">Home</a>
+          <a href="login.html" class="header-button">Login</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="#" class="header-button lang-select" id="lang-toggle">
+            🌐 <span id="current-lang">En</span> ▼
+          </a>
+        </section>
+      </section>
+    </section>
+
+    <!-- תפריט השפות -->
+    <ul id="lang-menu" class="lang-dropdown hidden">
+      <li data-lang="en">English</li>
+      <li data-lang="he">עברית</li>
+      <li data-lang="fr">Français</li>
+      <li data-lang="es">Español</li>
+    </ul>
+
+    <section id="main-menu">
+      <h2>Main Menu:</h2>
+
+      <section class="menu-grid">
+        <a href="inventory.html" style="text-decoration: none; color: inherit">
+          <section class="menu-item">
+            <img src="assets/icons/pistol.png" alt="Pistol" />
+            <p>Pistol</p>
+          </section>
+        </a>
+        <a href="inventory.html" style="text-decoration: none; color: inherit">
+          <section class="menu-item">
+            <img src="assets/icons/knife.png" alt="Knives" />
+            <p>Knives</p>
+          </section>
+        </a>
+        <a href="inventory.html" style="text-decoration: none; color: inherit">
+          <section class="menu-item">
+            <img src="assets/icons/rifle.png" alt="Rifle" />
+            <p>Rifle</p>
+          </section>
+        </a>
+        <a href="inventory.html" style="text-decoration: none; color: inherit">
+          <section class="menu-item">
+            <img src="assets/icons/gloves.png" alt="Gloves" />
+            <p>Gloves</p>
+          </section>
+        </a>
+        <a href="inventory.html" style="text-decoration: none; color: inherit">
+          <section class="menu-item">
+            <img src="assets/icons/midtier.png" alt="Mid-Tier" />
+            <p>Mid-Tier</p>
+          </section>
+        </a>
+      </section>
+    </section>
+
+    <!-- סקריפט להפעלת תפריט שפות -->
+    <script>
+      const toggle = document.getElementById("lang-toggle");
+      const menu = document.getElementById("lang-menu");
+      const currentLang = document.getElementById("current-lang");
+
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        menu.classList.toggle("hidden");
+      });
+
+      menu.querySelectorAll("li").forEach((item) => {
+        item.addEventListener("click", () => {
+          const selectedLang = item.getAttribute("data-lang");
+          currentLang.textContent = item.textContent;
+          menu.classList.add("hidden");
+          console.log(`Language changed to: ${selectedLang}`);
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CounterStats | Employee Home</title>
+    <link rel="stylesheet" href="styles/main.css" />
+    <link rel="stylesheet" href="styles/employee.css" />
+  </head>
+
+  <body>
+    <!-- Header -->
+    <section id="header">
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>Conterstates</h1>
+        </section>
+        <section class="header-right">
+          <a href="employee-home.html" class="header-button">Home</a>
+          <a href="employee-login.html" class="header-button">Login</a>
+          <a href="#" class="header-button lang-select">🌐 En ▼</a>
+        </section>
+      </section>
+    </section>
+
+    <!-- Main -->
+    <section id="user-section">
+      <section class="user-header">
+        <h2>users:</h2>
+        <section style="display: flex; align-items: center">
+          <input type="text" id="searchInput" placeholder="🔍 Search" />
+          <section id="sortToggle">| Sort by ▼</section>
+        </section>
+      </section>
+
+      <section id="userList">
+        <section class="user-row" data-name="amitsa">
+          <a href="user-details.html" class="user-link">amitsa</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="eyalda">
+          <a href="user-details.html" class="user-link">eyalda</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="yuval">
+          <a href="user-details.html" class="user-link">yuval</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="avivit">
+          <a href="user-details.html" class="user-link">avivit</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="daniel">
+          <a href="user-details.html" class="user-link">daniel</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="amir">
+          <a href="user-details.html" class="user-link">amir</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="shahar">
+          <a href="user-details.html" class="user-link">shahar</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="yarin">
+          <a href="user-details.html" class="user-link">yarin</a>
+          <span>id:324272287</span>
+        </section>
+        <section class="user-row" data-name="sharon">
+          <a href="user-details.html" class="user-link">sharon</a>
+          <span>id:324272287</span>
+        </section>
+      </section>
+    </section>
+
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const userRows = document.querySelectorAll(".user-row");
+
+      searchInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          const query = e.target.value.trim().toLowerCase();
+
+          userRows.forEach((row) => {
+            const name = row.dataset.name.toLowerCase();
+            row.style.display = name.includes(query) ? "flex" : "none";
+          });
+        }
+      });
+
+      const sortToggle = document.getElementById("sortToggle");
+      const userList = document.getElementById("userList");
+
+      sortToggle.addEventListener("click", () => {
+        const rows = Array.from(userList.querySelectorAll(".user-row"));
+        rows.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
+        rows.forEach((row) => userList.appendChild(row));
+      });
+    </script>
+  </body>
+</html>
