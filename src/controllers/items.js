@@ -3,8 +3,13 @@ import Item from "../models/item.js";
 import mongoose from "mongoose";
 
 /* GET /api/items */
-export async function getAll(_, res) {
-  const items = await Item.find().lean();
+export async function getAll(req, res) {
+  const { category } = req.query;
+
+  const filter = {};
+  if (category) filter.category = category;
+
+  const items = await Item.find(filter).lean();
   res.json(items);
 }
 
