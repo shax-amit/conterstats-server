@@ -1,30 +1,115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <title>Inventory | CounterStats</title>
+    <title>CounterStats | Inventory</title>
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
     <section id="header">
-      <a href="index.html">Home</a>
-      <h1>Inventory</h1>
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>CounterStats</h1>
+        </section>
+        <section class="header-right">
+          <a href="index.html" class="header-button">Home</a>
+          <a href="login.html" class="header-button">Login</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="orders.html" class="header-button">Orders</a>
+          <a href="#" class="header-button lang-select" id="lang-toggle">
+            🌐 <span id="current-lang">En</span> ▼
+          </a>
+        </section>
+      </section>
     </section>
-    <section id="inventory-table">
-      <h2>All Weapons Categories</h2>
-      <table id="items-table">
-        <thead>
-          <tr>
-            <th>Category</th>
-            <th>Name</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Items will be dynamically loaded here -->
-        </tbody>
-      </table>
+
+    <section id="inventory-container">
+      <h2>Weapons Inventory</h2>
+
+      <!-- Filter and Search Section -->
+      <section id="inventory-controls">
+        <div class="filter-section">
+          <label for="category-filter">Filter by Category:</label>
+          <select id="category-filter">
+            <option value="">All Categories</option>
+            <option value="Pistol">Pistol</option>
+            <option value="Knives">Knives</option>
+            <option value="Rifle">Rifle</option>
+            <option value="Gloves">Gloves</option>
+            <option value="Mid-Tier">Mid-Tier</option>
+          </select>
+        </div>
+
+        <div class="search-section">
+          <input type="text" id="search-input" placeholder="Search items..." />
+        </div>
+
+        <div class="admin-controls" id="admin-controls" style="display: none">
+          <button id="add-item-btn" class="action-button">Add New Item</button>
+        </div>
+      </section>
+
+      <!-- Loading and Error States -->
+      <div id="loading" class="loading hidden">Loading inventory...</div>
+      <div id="error" class="error hidden"></div>
+
+      <!-- Items Table -->
+      <section id="inventory-table">
+        <table id="items-table">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Items will be dynamically loaded here -->
+          </tbody>
+        </table>
+      </section>
+
+      <section id="empty-inventory" class="hidden">
+        <p>
+          No items found.
+          <span id="admin-add-text" style="display: none"
+            >Add some items to get started.</span
+          >
+        </p>
+      </section>
     </section>
-    <script src="inventory.js"></script>
+
+    <!-- Add Item Modal (Admin Only) -->
+    <div id="add-item-modal" class="modal hidden">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h3>Add New Item</h3>
+        <form id="add-item-form">
+          <div class="form-group">
+            <label for="item-name">Name:</label>
+            <input type="text" id="item-name" required />
+          </div>
+          <div class="form-group">
+            <label for="item-category">Category:</label>
+            <select id="item-category" required>
+              <option value="">Select Category</option>
+              <option value="Pistol">Pistol</option>
+              <option value="Knives">Knives</option>
+              <option value="Rifle">Rifle</option>
+              <option value="Gloves">Gloves</option>
+              <option value="Mid-Tier">Mid-Tier</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="item-price">Price:</label>
+            <input type="number" id="item-price" min="0" step="0.01" required />
+          </div>
+          <button type="submit" class="submit-button">Add Item</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="scripts/inventory.js"></script>
   </body>
 </html>

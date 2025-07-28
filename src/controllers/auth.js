@@ -8,10 +8,21 @@ const jwtOpts = { expiresIn: "7d" };
 // ---------- REGISTER ----------
 export async function register(req, res) {
   try {
-    const { first_name, last_name, email, password, phone } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: "Invalid email format" });
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      return res.status(400).json({ error: "Password must be at least 6 characters long" });
     }
 
     const existingUser = await User.findOne({ email });
@@ -22,12 +33,9 @@ export async function register(req, res) {
     const hashedPassword = await bcrypt.hash(password, 12);
 
     const user = await User.create({
-      first_name,
-      last_name,
       email,
-      phone,
       password: hashedPassword,
-      // role נשאר "customer" לפי ברירת מחדל
+      // role defaults to "customer"
     });
 
     const token = jwt.sign(

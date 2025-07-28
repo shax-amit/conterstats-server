@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CounterStats | Orders</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <section id="header">
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>CounterStats</h1>
+        </section>
+        <section class="header-right">
+          <a href="index.html" class="header-button">Home</a>
+          <a href="login.html" class="header-button">Login</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="orders.html" class="header-button">Orders</a>
+          <a href="#" class="header-button lang-select" id="lang-toggle">
+            🌐 <span id="current-lang">En</span> ▼
+          </a>
+        </section>
+      </section>
+    </section>
+
+    <section id="orders-container">
+      <h2>My Orders</h2>
+
+      <div id="loading" class="loading hidden">Loading orders...</div>
+      <div id="error" class="error hidden"></div>
+
+      <section id="orders-list">
+        <!-- Orders will be loaded here dynamically -->
+      </section>
+
+      <section id="empty-orders" class="hidden">
+        <p>
+          You haven't placed any orders yet.
+          <a href="inventory.html">Browse items</a> to make your first purchase.
+        </p>
+      </section>
+
+      <section id="order-summary" class="hidden">
+        <h3>Order Summary</h3>
+        <div id="summary-stats">
+          <!-- Order statistics will be displayed here -->
+        </div>
+      </section>
+    </section>
+
+    <script src="scripts/orders.js"></script>
+  </body>
+</html>

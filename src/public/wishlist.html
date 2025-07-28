@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CounterStats | Wishlist</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <section id="header">
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>CounterStats</h1>
+        </section>
+        <section class="header-right">
+          <a href="index.html" class="header-button">Home</a>
+          <a href="login.html" class="header-button">Login</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="orders.html" class="header-button">Orders</a>
+          <a href="#" class="header-button lang-select" id="lang-toggle">
+            🌐 <span id="current-lang">En</span> ▼
+          </a>
+        </section>
+      </section>
+    </section>
+
+    <section id="wishlist-container">
+      <h2>My Wishlist</h2>
+
+      <div id="loading" class="loading hidden">Loading wishlist...</div>
+      <div id="error" class="error hidden"></div>
+
+      <section id="wishlist-items">
+        <!-- Wishlist items will be loaded here dynamically -->
+      </section>
+
+      <section id="empty-wishlist" class="hidden">
+        <p>
+          Your wishlist is empty. <a href="inventory.html">Browse items</a> to
+          add to your wishlist.
+        </p>
+      </section>
+
+      <section id="wishlist-actions" class="hidden">
+        <button id="create-order-btn" class="action-button">
+          Create Order from Wishlist
+        </button>
+        <button id="clear-wishlist-btn" class="action-button danger">
+          Clear All Items
+        </button>
+      </section>
+    </section>
+
+    <script src="scripts/wishlist.js"></script>
+  </body>
+</html>
