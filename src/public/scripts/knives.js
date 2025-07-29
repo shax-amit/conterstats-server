@@ -5,7 +5,7 @@ let itemsData = [];
 const WISHLIST_KEY = "wishlist";
 
 // קריאת פריטים מהשרת (knives)
-fetch("http://localhost:4000/api/items?category=Knives", {
+fetch("https://conterstats-server.onrender.com/api/items?category=Knives", {
   headers: {
     Authorization: `Bearer ${token}`,
   },

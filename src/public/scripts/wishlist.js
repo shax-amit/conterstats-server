@@ -30,7 +30,7 @@ class WishlistManager {
         throw new Error('Please login to view your wishlist');
       }
 
-      const response = await fetch('/api/wishlist', {
+      const response = await fetch('https://conterstats-server.onrender.com/api/wishlist', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -102,7 +102,7 @@ class WishlistManager {
     }
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/wishlist/${itemId}`, {
+      const response = await fetch(`https://conterstats-server.onrender.com/api/wishlist/${itemId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -131,7 +131,7 @@ class WishlistManager {
   async createOrderFromWishlist() {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/orders', {
+      const response = await fetch('https://conterstats-server.onrender.com/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,7 +173,7 @@ class WishlistManager {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/wishlist', {
+      const response = await fetch('https://conterstats-server.onrender.com/api/wishlist', {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
