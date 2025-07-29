@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>CounterStats | Wishlist</title>
+    <title>User Wishlist</title>
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
@@ -14,8 +14,6 @@
         <section class="header-right">
           <a href="index.html" class="header-button">Home</a>
           <a href="login.html" class="header-button">Login</a>
-          <a href="wishlist.html" class="header-button">Wishlist</a>
-          <a href="orders.html" class="header-button">Orders</a>
           <a href="#" class="header-button lang-select" id="lang-toggle">
             🌐 <span id="current-lang">En</span> ▼
           </a>
@@ -28,6 +26,72 @@
       <li data-lang="fr">Français</li>
       <li data-lang="es">Español</li>
     </ul>
+    <section id="wishlist-section">
+      <h2>User Wishlist</h2>
+      <div id="wishlist-items"></div>
+      <div id="wishlist-actions" style="margin-top: 2rem">
+        <button class="action-button" id="buy-all-btn">Buy All</button>
+      </div>
+    </section>
+    <script>
+      let currentWishlistItems = [];
+      document.addEventListener("DOMContentLoaded", async () => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        if (!id) {
+          document.getElementById("wishlist-items").textContent =
+            "No user ID provided.";
+          return;
+        }
+        const token = localStorage.getItem("token");
+        const res = await fetch(`/api/wishlist?userId=${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          document.getElementById("wishlist-items").textContent =
+            "Wishlist not found.";
+          return;
+        }
+        const items = await res.json();
+        currentWishlistItems = items;
+        if (!items.length) {
+          document.getElementById("wishlist-items").textContent =
+            "Wishlist is empty.";
+          return;
+        }
+        document.getElementById("wishlist-items").innerHTML = items
+          .map((entry) => {
+            const it = entry.item || {};
+            return `
+              <div class="wishlist-item" data-id="${it._id || ""}">
+                <div class="item-info">
+                  <h3>${it.name || "Unknown Item"}</h3>
+                  <p class="category">${it.category || ""}</p>
+                  <p class="price">$${it.price != null ? it.price : "N/A"}</p>
+                  ${
+                    it.imageUrl
+                      ? `<img src=\"${it.imageUrl}\" alt=\"${it.name}\" class=\"item-image\" />`
+                      : ""
+                  }
+                </div>
+                <div class="item-actions">
+                  <button class="remove-btn" onclick="removeFromUserWishlist('${
+                    it._id
+                  }')">Remove</button>
+                </div>
+              </div>
+            `;
+          })
+          .join("");
+      });
+      document.getElementById("buy-all-btn").onclick = function () {
+        const ids = currentWishlistItems
+          .map((entry) => entry.item?._id)
+          .filter(Boolean);
+        if (!ids.length) return alert("No items to buy!");
+        window.location.href = `payment.html?items=${ids.join(",")}`;
+      };
+    </script>
     <script>
       const toggle = document.getElementById("lang-toggle");
       const menu = document.getElementById("lang-menu");
@@ -51,6 +115,7 @@
       });
       document.addEventListener("DOMContentLoaded", () => {
         const user = JSON.parse(localStorage.getItem("user") || "null");
+        const headerRight = document.querySelector(".header-right");
         // דינמיקה לכפתור Home
         const homeBtn = document.querySelector(
           'a.header-button[href="index.html"]'
@@ -58,18 +123,7 @@
         if (user && user.role === "admin" && homeBtn) {
           homeBtn.setAttribute("href", "admin-home.html");
         }
-        // הסתרת Wishlist ו-Orders לאדמין
-        if (user && user.role === "admin") {
-          const wishlistBtn = document.querySelector(
-            'a.header-button[href="wishlist.html"]'
-          );
-          const ordersBtn = document.querySelector(
-            'a.header-button[href="orders.html"]'
-          );
-          if (wishlistBtn) wishlistBtn.style.display = "none";
-          if (ordersBtn) ordersBtn.style.display = "none";
-        }
-        const headerRight = document.querySelector(".header-right");
+        // הצגת שם משתמש וכפתור Logout
         if (user && headerRight) {
           // Remove old if exists
           const oldUserSpan = document.querySelector(".header-user");
@@ -99,16 +153,22 @@
         }
       });
     </script>
-
-    <section id="wishlist-section">
-      <h2>My Wishlist</h2>
-      <div id="loading" class="loading hidden">Loading wishlist...</div>
-      <div id="error" class="error hidden"></div>
-      <div id="wishlist-items"></div>
-      <div id="wishlist-actions" style="margin-top: 2rem; text-align: center">
-        <button class="action-button" id="buy-all-btn">Buy All</button>
-      </div>
-    </section>
-    <script src="scripts/wishlist.js"></script>
+    <script>
+      function removeFromUserWishlist(itemId) {
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get("id");
+        const token = localStorage.getItem("token");
+        fetch(`/api/wishlist/${itemId}?userId=${userId}`, {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${token}` },
+        }).then((res) => {
+          if (res.ok) {
+            location.reload();
+          } else {
+            alert("Failed to remove item");
+          }
+        });
+      }
+    </script>
   </body>
 </html>

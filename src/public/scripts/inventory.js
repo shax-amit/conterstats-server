@@ -1,3 +1,12 @@
+// Add this mapping at the very top of the file, outside the class
+const CATEGORY_MAP = {
+  pistol: "Pistol",
+  knives: "Knives",
+  rifle: "Rifle",
+  gloves: "Gloves",
+  midtier: "Mid-Tier"
+};
+
 // Inventory management with CRUD operations
 class InventoryManager {
   constructor() {
@@ -10,6 +19,16 @@ class InventoryManager {
   async init() {
     await this.checkAuth();
     await this.loadItems();
+
+    // --- Category filter from URL ---
+    const params = new URLSearchParams(window.location.search);
+    const urlCategory = params.get('category');
+    if (urlCategory && CATEGORY_MAP[urlCategory]) {
+      document.getElementById('category-filter').value = CATEGORY_MAP[urlCategory];
+    }
+    this.filterItems();
+    // --- End category filter block ---
+
     this.setupEventListeners();
   }
 
@@ -40,7 +59,7 @@ class InventoryManager {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const tableEl = document.getElementById('inventory-table');
-    const emptyEl = document.getElementById('empty-inventory');
+    // const emptyEl = document.getElementById('empty-inventory'); // Removed unused variable
 
     try {
       loadingEl.classList.remove('hidden');
@@ -67,22 +86,23 @@ class InventoryManager {
 
   renderItems() {
     const tbody = document.querySelector('#items-table tbody');
-    const emptyEl = document.getElementById('empty-inventory');
     const tableEl = document.getElementById('inventory-table');
+    // const emptyEl = document.getElementById('empty-inventory'); // Removed unused variable
 
     if (this.filteredItems.length === 0) {
       tableEl.classList.add('hidden');
-      emptyEl.classList.remove('hidden');
+      // emptyEl.classList.remove('hidden'); // Removed unused variable
       return;
     }
 
     tableEl.classList.remove('hidden');
-    emptyEl.classList.add('hidden');
+    // emptyEl.classList.add('hidden'); // Removed unused variable
 
     tbody.innerHTML = this.filteredItems.map(item => `
       <tr data-id="${item._id}">
         <td>${item.category}</td>
         <td>${item.name}</td>
+        <td>${item.condition}</td>
         <td>$${item.price || 'N/A'}</td>
         <td>
           <button class="wishlist-btn" onclick="inventoryManager.addToWishlist('${item._id}')">
@@ -179,7 +199,7 @@ class InventoryManager {
     }
   }
 
-  editItem(itemId) {
+  editItem(/* itemId */) { // Removed unused parameter
     // TODO: Implement edit functionality
     this.showMessage('Edit functionality coming soon!', 'info');
   }
@@ -306,4 +326,5 @@ class InventoryManager {
 }
 
 // Initialize inventory manager
+// eslint-disable-next-line no-unused-vars
 const inventoryManager = new InventoryManager(); 
