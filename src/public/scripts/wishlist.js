@@ -14,14 +14,18 @@ class WishlistManager {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const itemsEl = document.getElementById('wishlist-items');
-    const emptyEl = document.getElementById('empty-wishlist');
-    const actionsEl = document.getElementById('wishlist-actions');
+    // DEBUG: Print user and token
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const token = localStorage.getItem('token');
+    console.log('[DEBUG] user:', user);
+    console.log('[DEBUG] token:', token);
+    // const emptyEl = document.getElementById('empty-wishlist'); // Removed unused variable
+    // const actionsEl = document.getElementById('wishlist-actions'); // Removed unused variable
 
     try {
       loadingEl.classList.remove('hidden');
       errorEl.classList.add('hidden');
 
-      const token = localStorage.getItem('token');
       if (!token) {
         throw new Error('Please login to view your wishlist');
       }
@@ -31,6 +35,9 @@ class WishlistManager {
           'Authorization': `Bearer ${token}`
         }
       });
+      // DEBUG: Print API response
+      const debugText = await response.clone().text();
+      console.log('[DEBUG] /api/wishlist response:', debugText);
 
       if (!response.ok) {
         if (response.status === 401) {
@@ -39,7 +46,8 @@ class WishlistManager {
         throw new Error('Failed to load wishlist');
       }
 
-      this.wishlistItems = await response.json();
+      let loaded = JSON.parse(debugText);
+      this.wishlistItems = Array.isArray(loaded) ? loaded.filter(item => item.item) : [];
       this.renderWishlist();
 
     } catch (error) {
@@ -53,37 +61,45 @@ class WishlistManager {
 
   renderWishlist() {
     const itemsEl = document.getElementById('wishlist-items');
-    const emptyEl = document.getElementById('empty-wishlist');
-    const actionsEl = document.getElementById('wishlist-actions');
+    // const emptyEl = document.getElementById('empty-wishlist'); // Removed unused variable
+    // const actionsEl = document.getElementById('wishlist-actions'); // Removed unused variable
 
     if (this.wishlistItems.length === 0) {
       itemsEl.classList.add('hidden');
-      emptyEl.classList.remove('hidden');
-      actionsEl.classList.add('hidden');
+      // emptyEl.classList.remove('hidden'); // Removed unused variable
+      // actionsEl.classList.add('hidden'); // Removed unused variable
       return;
     }
 
     itemsEl.classList.remove('hidden');
-    emptyEl.classList.add('hidden');
-    actionsEl.classList.remove('hidden');
+    // emptyEl.classList.add('hidden'); // Removed unused variable
+    // actionsEl.classList.remove('hidden'); // Removed unused variable
 
-    itemsEl.innerHTML = this.wishlistItems.map(item => `
-      <div class="wishlist-item" data-id="${item._id}">
-        <div class="item-info">
-          <h3>${item.name}</h3>
-          <p class="category">${item.category}</p>
-          <p class="price">$${item.price || 'N/A'}</p>
+    itemsEl.innerHTML = this.wishlistItems.map(item => {
+      const it = item.item || {};
+      // Use the item ObjectId for removal, fallback to 'null' if missing
+      const removeId = it._id ? it._id : 'null';
+      return `
+        <div class="wishlist-item" data-id="${removeId}">
+          <div class="item-info">
+            <h3>${it.name || 'Unknown Item'}</h3>
+            <p class="category">${it.category || ''}</p>
+            <p class="price">$${it.price != null ? it.price : 'N/A'}</p>
+            ${it.imageUrl ? `<img src="${it.imageUrl}" alt="${it.name}" class="item-image" />` : ''}
+          </div>
+          <div class="item-actions">
+            <button class="remove-btn" onclick="wishlistManager.removeItem('${removeId}')">Remove</button>
+          </div>
         </div>
-        <div class="item-actions">
-          <button class="remove-btn" onclick="wishlistManager.removeItem('${item._id}')">
-            Remove
-          </button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   async removeItem(itemId) {
+    if (!itemId) {
+      this.showMessage('Invalid item id', 'error');
+      return;
+    }
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`/api/wishlist/${itemId}`, {
@@ -98,7 +114,11 @@ class WishlistManager {
       }
 
       // Remove from local array and re-render
-      this.wishlistItems = this.wishlistItems.filter(item => item._id !== itemId);
+      this.wishlistItems = this.wishlistItems.filter(item => {
+        const it = item.item || {};
+        const removeId = it._id ? it._id : 'null';
+        return removeId !== itemId;
+      });
       this.renderWishlist();
       
       this.showMessage('Item removed from wishlist', 'success');
@@ -129,7 +149,7 @@ class WishlistManager {
         throw new Error('Failed to create order');
       }
 
-      const order = await response.json();
+      // const order = await response.json(); // Removed unused variable
       this.showMessage('Order created successfully!', 'success');
       
       // Clear wishlist after successful order
@@ -174,13 +194,28 @@ class WishlistManager {
   }
 
   setupEventListeners() {
-    document.getElementById('create-order-btn').addEventListener('click', () => {
-      this.createOrderFromWishlist();
-    });
-
-    document.getElementById('clear-wishlist-btn').addEventListener('click', () => {
-      this.clearWishlist();
-    });
+    const createOrderBtn = document.getElementById('create-order-btn');
+    if (createOrderBtn) {
+      createOrderBtn.addEventListener('click', () => {
+        this.createOrderFromWishlist();
+      });
+    }
+    const clearWishlistBtn = document.getElementById('clear-wishlist-btn');
+    if (clearWishlistBtn) {
+      clearWishlistBtn.addEventListener('click', () => {
+        this.clearWishlist();
+      });
+    }
+    const buyAllBtn = document.getElementById('buy-all-btn');
+    if (buyAllBtn) {
+      buyAllBtn.addEventListener('click', () => {
+        const items = this.wishlistItems
+          .map(item => item.item && item.item._id ? item.item._id : null)
+          .filter(Boolean);
+        if (!items.length) return alert('No items to buy!');
+        window.location.href = `payment.html?items=${items.join(',')}`;
+      });
+    }
   }
 
   showMessage(message, type = 'info') {
@@ -205,4 +240,5 @@ class WishlistManager {
 }
 
 // Initialize wishlist manager
+// eslint-disable-next-line no-unused-vars
 const wishlistManager = new WishlistManager();

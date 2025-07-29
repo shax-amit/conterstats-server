@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <title>CounterStats | Wishlist</title>
+    <title>CounterStats | Admin Home</title>
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
@@ -12,30 +12,90 @@
           <h1>CounterStats</h1>
         </section>
         <section class="header-right">
-          <a href="index.html" class="header-button">Home</a>
+          <a href="admin-home.html" class="header-button">Home</a>
           <a href="login.html" class="header-button">Login</a>
-          <a href="wishlist.html" class="header-button">Wishlist</a>
-          <a href="orders.html" class="header-button">Orders</a>
           <a href="#" class="header-button lang-select" id="lang-toggle">
             🌐 <span id="current-lang">En</span> ▼
           </a>
         </section>
       </section>
     </section>
+
+    <!-- תפריט השפות -->
     <ul id="lang-menu" class="lang-dropdown hidden">
       <li data-lang="en">English</li>
       <li data-lang="he">עברית</li>
       <li data-lang="fr">Français</li>
       <li data-lang="es">Español</li>
     </ul>
+
+    <section id="main-menu">
+      <h2>Main Menu:</h2>
+      <section class="menu-grid">
+        <a
+          href="inventory.html?category=pistol"
+          style="text-decoration: none; color: inherit"
+        >
+          <section class="menu-item">
+            <img src="assets/icons/pistol.png" alt="Pistol" />
+            <p>Pistol</p>
+          </section>
+        </a>
+        <a
+          href="inventory.html?category=knives"
+          style="text-decoration: none; color: inherit"
+        >
+          <section class="menu-item">
+            <img src="assets/icons/knife.png" alt="Knives" />
+            <p>Knives</p>
+          </section>
+        </a>
+        <a
+          href="inventory.html?category=rifle"
+          style="text-decoration: none; color: inherit"
+        >
+          <section class="menu-item">
+            <img src="assets/icons/rifle.png" alt="Rifle" />
+            <p>Rifle</p>
+          </section>
+        </a>
+        <a
+          href="inventory.html?category=gloves"
+          style="text-decoration: none; color: inherit"
+        >
+          <section class="menu-item">
+            <img src="assets/icons/gloves.png" alt="Gloves" />
+            <p>Gloves</p>
+          </section>
+        </a>
+        <a
+          href="inventory.html?category=midtier"
+          style="text-decoration: none; color: inherit"
+        >
+          <section class="menu-item">
+            <img src="assets/icons/midtier.png" alt="Mid-Tier" />
+            <p>Mid-Tier</p>
+          </section>
+        </a>
+        <a href="users.html" style="text-decoration: none; color: inherit">
+          <section class="menu-item">
+            <p>users</p>
+          </section>
+        </a>
+      </section>
+    </section>
+
+    <!-- סקריפט להפעלת תפריט שפות -->
     <script>
       const toggle = document.getElementById("lang-toggle");
       const menu = document.getElementById("lang-menu");
       const currentLang = document.getElementById("current-lang");
+
       toggle.addEventListener("click", (e) => {
         e.preventDefault();
         menu.classList.toggle("hidden");
       });
+
       menu.querySelectorAll("li").forEach((item) => {
         item.addEventListener("click", () => {
           const selectedLang = item.getAttribute("data-lang");
@@ -44,31 +104,17 @@
           console.log(`Language changed to: ${selectedLang}`);
         });
       });
+
       document.addEventListener("click", (e) => {
         if (!toggle.contains(e.target) && !menu.contains(e.target)) {
           menu.classList.add("hidden");
         }
       });
+    </script>
+    <!-- הרשאת גישה: רק אדמין -->
+    <script>
       document.addEventListener("DOMContentLoaded", () => {
         const user = JSON.parse(localStorage.getItem("user") || "null");
-        // דינמיקה לכפתור Home
-        const homeBtn = document.querySelector(
-          'a.header-button[href="index.html"]'
-        );
-        if (user && user.role === "admin" && homeBtn) {
-          homeBtn.setAttribute("href", "admin-home.html");
-        }
-        // הסתרת Wishlist ו-Orders לאדמין
-        if (user && user.role === "admin") {
-          const wishlistBtn = document.querySelector(
-            'a.header-button[href="wishlist.html"]'
-          );
-          const ordersBtn = document.querySelector(
-            'a.header-button[href="orders.html"]'
-          );
-          if (wishlistBtn) wishlistBtn.style.display = "none";
-          if (ordersBtn) ordersBtn.style.display = "none";
-        }
         const headerRight = document.querySelector(".header-right");
         if (user && headerRight) {
           // Remove old if exists
@@ -99,16 +145,5 @@
         }
       });
     </script>
-
-    <section id="wishlist-section">
-      <h2>My Wishlist</h2>
-      <div id="loading" class="loading hidden">Loading wishlist...</div>
-      <div id="error" class="error hidden"></div>
-      <div id="wishlist-items"></div>
-      <div id="wishlist-actions" style="margin-top: 2rem; text-align: center">
-        <button class="action-button" id="buy-all-btn">Buy All</button>
-      </div>
-    </section>
-    <script src="scripts/wishlist.js"></script>
   </body>
 </html>

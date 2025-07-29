@@ -22,6 +22,83 @@
         </section>
       </section>
     </section>
+    <ul id="lang-menu" class="lang-dropdown hidden">
+      <li data-lang="en">English</li>
+      <li data-lang="he">עברית</li>
+      <li data-lang="fr">Français</li>
+      <li data-lang="es">Español</li>
+    </ul>
+    <script>
+      const toggle = document.getElementById("lang-toggle");
+      const menu = document.getElementById("lang-menu");
+      const currentLang = document.getElementById("current-lang");
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        menu.classList.toggle("hidden");
+      });
+      menu.querySelectorAll("li").forEach((item) => {
+        item.addEventListener("click", () => {
+          const selectedLang = item.getAttribute("data-lang");
+          currentLang.textContent = item.textContent;
+          menu.classList.add("hidden");
+          console.log(`Language changed to: ${selectedLang}`);
+        });
+      });
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add("hidden");
+        }
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        // דינמיקה לכפתור Home
+        const homeBtn = document.querySelector(
+          'a.header-button[href="index.html"]'
+        );
+        if (user && user.role === "admin" && homeBtn) {
+          homeBtn.setAttribute("href", "admin-home.html");
+        }
+        // הסתרת Wishlist ו-Orders לאדמין
+        if (user && user.role === "admin") {
+          const wishlistBtn = document.querySelector(
+            'a.header-button[href="wishlist.html"]'
+          );
+          const ordersBtn = document.querySelector(
+            'a.header-button[href="orders.html"]'
+          );
+          if (wishlistBtn) wishlistBtn.style.display = "none";
+          if (ordersBtn) ordersBtn.style.display = "none";
+        }
+        const headerRight = document.querySelector(".header-right");
+        if (user && headerRight) {
+          // Remove old if exists
+          const oldUserSpan = document.querySelector(".header-user");
+          const oldLogout = document.querySelector(".header-logout");
+          if (oldUserSpan) oldUserSpan.remove();
+          if (oldLogout) oldLogout.remove();
+          // User info
+          const userSpan = document.createElement("span");
+          userSpan.textContent = `Logged in as:\n${user.email} (${user.role})`;
+          userSpan.className = "header-user";
+          userSpan.style.marginLeft = "2rem";
+          userSpan.style.fontWeight = "normal";
+          userSpan.style.whiteSpace = "pre";
+          headerRight.appendChild(userSpan);
+          // Logout button
+          const logoutBtn = document.createElement("a");
+          logoutBtn.href = "#";
+          logoutBtn.className = "header-button header-logout";
+          logoutBtn.textContent = "Logout";
+          logoutBtn.onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          };
+          headerRight.appendChild(logoutBtn);
+        }
+      });
+    </script>
 
     <section id="inventory-container">
       <h2>Weapons Inventory</h2>
@@ -60,6 +137,7 @@
             <tr>
               <th>Category</th>
               <th>Name</th>
+              <th>Condition</th>
               <th>Price</th>
               <th>Actions</th>
             </tr>

@@ -4,7 +4,6 @@
     <meta charset="UTF-8" />
     <title>CounterStats | Employee Home</title>
     <link rel="stylesheet" href="styles/main.css" />
-    <link rel="stylesheet" href="styles/employee.css" />
   </head>
 
   <body>
@@ -15,85 +14,123 @@
           <h1>CounterStats</h1>
         </section>
         <section class="header-right">
-          <a href="employee-home.html" class="header-button">Home</a>
-          <a href="employee-login.html" class="header-button">Login</a>
-          <a href="#" class="header-button lang-select">🌐 En ▼</a>
+          <a href="index.html" class="header-button">Home</a>
+          <a href="login.html" class="header-button">Login</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="orders.html" class="header-button">Orders</a>
+          <a href="#" class="header-button lang-select" id="lang-toggle">
+            🌐 <span id="current-lang">En</span> ▼
+          </a>
         </section>
       </section>
     </section>
+    <!-- תפריט השפות -->
+    <ul id="lang-menu" class="lang-dropdown hidden">
+      <li data-lang="en">English</li>
+      <li data-lang="he">עברית</li>
+      <li data-lang="fr">Français</li>
+      <li data-lang="es">Español</li>
+    </ul>
+    <script>
+      const toggle = document.getElementById("lang-toggle");
+      const menu = document.getElementById("lang-menu");
+      const currentLang = document.getElementById("current-lang");
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        menu.classList.toggle("hidden");
+      });
+      menu.querySelectorAll("li").forEach((item) => {
+        item.addEventListener("click", () => {
+          const selectedLang = item.getAttribute("data-lang");
+          currentLang.textContent = item.textContent;
+          menu.classList.add("hidden");
+          console.log(`Language changed to: ${selectedLang}`);
+        });
+      });
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target)) {
+          menu.classList.add("hidden");
+        }
+      });
+    </script>
 
     <!-- Main -->
     <section id="user-section">
-      <section class="user-header">
-        <h2>users:</h2>
-        <section style="display: flex; align-items: center">
-          <input type="text" id="searchInput" placeholder="🔍 Search" />
-          <section id="sortToggle">| Sort by ▼</section>
-        </section>
-      </section>
-
-      <section id="userList">
-        <section class="user-row" data-name="amitsa">
-          <a href="user-details.html" class="user-link">amitsa</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="eyalda">
-          <a href="user-details.html" class="user-link">eyalda</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="yuval">
-          <a href="user-details.html" class="user-link">yuval</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="avivit">
-          <a href="user-details.html" class="user-link">avivit</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="daniel">
-          <a href="user-details.html" class="user-link">daniel</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="amir">
-          <a href="user-details.html" class="user-link">amir</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="shahar">
-          <a href="user-details.html" class="user-link">shahar</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="yarin">
-          <a href="user-details.html" class="user-link">yarin</a>
-          <span>id:324272287</span>
-        </section>
-        <section class="user-row" data-name="sharon">
-          <a href="user-details.html" class="user-link">sharon</a>
-          <span>id:324272287</span>
-        </section>
-      </section>
+      <h2>Users</h2>
+      <table
+        id="users-table"
+        class="styled-table"
+        style="
+          width: 100%;
+          border-collapse: collapse;
+          background-color: white;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        "
+      >
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Users will be loaded here by JS -->
+        </tbody>
+      </table>
     </section>
-
+    <script src="scripts/users.js"></script>
     <script>
-      const searchInput = document.getElementById("searchInput");
-      const userRows = document.querySelectorAll(".user-row");
-
-      searchInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          const query = e.target.value.trim().toLowerCase();
-
-          userRows.forEach((row) => {
-            const name = row.dataset.name.toLowerCase();
-            row.style.display = name.includes(query) ? "flex" : "none";
-          });
+      document.addEventListener("DOMContentLoaded", () => {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const headerRight = document.querySelector(".header-right");
+        // דינמיקה לכפתור Home
+        const homeBtn = document.querySelector(
+          'a.header-button[href="index.html"]'
+        );
+        if (user && user.role === "admin" && homeBtn) {
+          homeBtn.setAttribute("href", "admin-home.html");
         }
-      });
-
-      const sortToggle = document.getElementById("sortToggle");
-      const userList = document.getElementById("userList");
-
-      sortToggle.addEventListener("click", () => {
-        const rows = Array.from(userList.querySelectorAll(".user-row"));
-        rows.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
-        rows.forEach((row) => userList.appendChild(row));
+        // הסתרת Wishlist ו-Orders לאדמין
+        if (user && user.role === "admin") {
+          const wishlistBtn = document.querySelector(
+            'a.header-button[href="wishlist.html"]'
+          );
+          const ordersBtn = document.querySelector(
+            'a.header-button[href="orders.html"]'
+          );
+          if (wishlistBtn) wishlistBtn.style.display = "none";
+          if (ordersBtn) ordersBtn.style.display = "none";
+        }
+        // הצגת שם משתמש וכפתור Logout
+        if (user && headerRight) {
+          // Remove old if exists
+          const oldUserSpan = document.querySelector(".header-user");
+          const oldLogout = document.querySelector(".header-logout");
+          if (oldUserSpan) oldUserSpan.remove();
+          if (oldLogout) oldLogout.remove();
+          // User info
+          const userSpan = document.createElement("span");
+          userSpan.textContent = `Logged in as:\n${user.email} (${user.role})`;
+          userSpan.className = "header-user";
+          userSpan.style.marginLeft = "2rem";
+          userSpan.style.fontWeight = "normal";
+          userSpan.style.whiteSpace = "pre";
+          headerRight.appendChild(userSpan);
+          // Logout button
+          const logoutBtn = document.createElement("a");
+          logoutBtn.href = "#";
+          logoutBtn.className = "header-button header-logout";
+          logoutBtn.textContent = "Logout";
+          logoutBtn.onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          };
+          headerRight.appendChild(logoutBtn);
+        }
       });
     </script>
   </body>

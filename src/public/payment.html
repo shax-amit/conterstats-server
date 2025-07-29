@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CounterStats | Payment</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <section id="header">
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>CounterStats</h1>
+        </section>
+        <section class="header-right">
+          <a href="index.html" class="header-button">Home</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="orders.html" class="header-button">Orders</a>
+        </section>
+      </section>
+    </section>
+    <section id="payment-section">
+      <h2>Checkout</h2>
+      <div id="items-table-container">
+        <table id="items-table" class="styled-table">
+          <thead>
+            <tr>
+              <th>Image</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Price</th>
+            </tr>
+          </thead>
+          <tbody id="items-tbody">
+            <!-- Items will be loaded here -->
+          </tbody>
+        </table>
+      </div>
+      <form id="payment-form">
+        <h3>Payment Details</h3>
+        <div class="form-group">
+          <label for="card-number">Card Number</label>
+          <input
+            type="text"
+            id="card-number"
+            maxlength="19"
+            required
+            placeholder="1234 5678 9012 3456"
+          />
+        </div>
+        <div class="form-group">
+          <label for="expiry">Expiry</label>
+          <input
+            type="text"
+            id="expiry"
+            maxlength="5"
+            required
+            placeholder="MM/YY"
+          />
+        </div>
+        <div class="form-group">
+          <label for="cvv">CVV</label>
+          <input
+            type="text"
+            id="cvv"
+            maxlength="4"
+            required
+            placeholder="123"
+          />
+        </div>
+        <button type="submit" class="action-button">Pay</button>
+      </form>
+      <div id="payment-message"></div>
+    </section>
+    <script>
+      async function fetchItems(ids) {
+        const token = localStorage.getItem("token");
+        const res = await fetch(`/api/items?ids=${ids.join(",")}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) return [];
+        return await res.json();
+      }
+      document.addEventListener("DOMContentLoaded", async () => {
+        const params = new URLSearchParams(window.location.search);
+        let ids = [];
+        if (params.get("item")) ids = [params.get("item")];
+        if (params.get("items")) ids = params.get("items").split(",");
+        ids = ids.filter(Boolean);
+        if (!ids.length) {
+          document.getElementById("items-tbody").innerHTML =
+            '<tr><td colspan="4">No items selected.</td></tr>';
+          document.getElementById("payment-form").style.display = "none";
+          return;
+        }
+        const items = await fetchItems(ids);
+        document.getElementById("items-tbody").innerHTML = items
+          .map(
+            (it) => `
+        <tr>
+          <td>${
+            it.imageUrl
+              ? `<img src="${it.imageUrl}" alt="${it.name}" style="width:48px;height:48px;">`
+              : ""
+          }</td>
+          <td>${it.name}</td>
+          <td>${it.category}</td>
+          <td>$${it.price != null ? it.price : "N/A"}</td>
+        </tr>
+      `
+          )
+          .join("");
+      });
+      document.getElementById("payment-form").onsubmit = function (e) {
+        e.preventDefault();
+        document.getElementById("payment-message").textContent =
+          "Payment processed! (Demo)";
+        document.getElementById("payment-form").reset();
+      };
+    </script>
+  </body>
+</html>

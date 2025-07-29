@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>CounterStats | Wishlist</title>
+    <title>User Details</title>
     <link rel="stylesheet" href="styles/main.css" />
   </head>
   <body>
@@ -14,8 +14,6 @@
         <section class="header-right">
           <a href="index.html" class="header-button">Home</a>
           <a href="login.html" class="header-button">Login</a>
-          <a href="wishlist.html" class="header-button">Wishlist</a>
-          <a href="orders.html" class="header-button">Orders</a>
           <a href="#" class="header-button lang-select" id="lang-toggle">
             🌐 <span id="current-lang">En</span> ▼
           </a>
@@ -28,6 +26,37 @@
       <li data-lang="fr">Français</li>
       <li data-lang="es">Español</li>
     </ul>
+    <section id="details-section">
+      <h2>User Details</h2>
+      <div id="user-details"></div>
+    </section>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        if (!id) {
+          document.getElementById("user-details").textContent =
+            "No user ID provided.";
+          return;
+        }
+        const token = localStorage.getItem("token");
+        const res = await fetch(`/api/users/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          document.getElementById("user-details").textContent =
+            "User not found.";
+          return;
+        }
+        const user = await res.json();
+        document.getElementById("user-details").innerHTML = `
+        <p><b>Email:</b> ${user.email}</p>
+        <p><b>Role:</b> ${user.role}</p>
+        <p><b>ID:</b> ${user._id}</p>
+        <p><b>Created At:</b> ${user.createdAt || ""}</p>
+      `;
+      });
+    </script>
     <script>
       const toggle = document.getElementById("lang-toggle");
       const menu = document.getElementById("lang-menu");
@@ -51,6 +80,7 @@
       });
       document.addEventListener("DOMContentLoaded", () => {
         const user = JSON.parse(localStorage.getItem("user") || "null");
+        const headerRight = document.querySelector(".header-right");
         // דינמיקה לכפתור Home
         const homeBtn = document.querySelector(
           'a.header-button[href="index.html"]'
@@ -58,18 +88,7 @@
         if (user && user.role === "admin" && homeBtn) {
           homeBtn.setAttribute("href", "admin-home.html");
         }
-        // הסתרת Wishlist ו-Orders לאדמין
-        if (user && user.role === "admin") {
-          const wishlistBtn = document.querySelector(
-            'a.header-button[href="wishlist.html"]'
-          );
-          const ordersBtn = document.querySelector(
-            'a.header-button[href="orders.html"]'
-          );
-          if (wishlistBtn) wishlistBtn.style.display = "none";
-          if (ordersBtn) ordersBtn.style.display = "none";
-        }
-        const headerRight = document.querySelector(".header-right");
+        // הצגת שם משתמש וכפתור Logout
         if (user && headerRight) {
           // Remove old if exists
           const oldUserSpan = document.querySelector(".header-user");
@@ -99,16 +118,5 @@
         }
       });
     </script>
-
-    <section id="wishlist-section">
-      <h2>My Wishlist</h2>
-      <div id="loading" class="loading hidden">Loading wishlist...</div>
-      <div id="error" class="error hidden"></div>
-      <div id="wishlist-items"></div>
-      <div id="wishlist-actions" style="margin-top: 2rem; text-align: center">
-        <button class="action-button" id="buy-all-btn">Buy All</button>
-      </div>
-    </section>
-    <script src="scripts/wishlist.js"></script>
   </body>
 </html>

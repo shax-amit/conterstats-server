@@ -28,4 +28,14 @@ export default defineConfig([
       },
     },
   },
+
+  // ――― Enable browser globals for frontend code ―――
+  {
+    files: ["src/public/**/*.{js,mjs,cjs}"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+    },
+  },
 ]);

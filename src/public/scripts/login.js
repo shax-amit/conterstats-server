@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // הפנייה לפי תפקיד
       if (data.user.role === "admin") {
-        window.location.href = "employee-home.html";
+        window.location.href = "admin-home.html";
       } else {
         window.location.href = "index.html";
       }

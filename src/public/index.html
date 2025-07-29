@@ -35,31 +35,46 @@
       <h2>Main Menu:</h2>
 
       <section class="menu-grid">
-        <a href="inventory.html" style="text-decoration: none; color: inherit">
+        <a
+          href="inventory.html?category=pistol"
+          style="text-decoration: none; color: inherit"
+        >
           <section class="menu-item">
             <img src="assets/icons/pistol.png" alt="Pistol" />
             <p>Pistol</p>
           </section>
         </a>
-        <a href="inventory.html" style="text-decoration: none; color: inherit">
+        <a
+          href="inventory.html?category=knives"
+          style="text-decoration: none; color: inherit"
+        >
           <section class="menu-item">
             <img src="assets/icons/knife.png" alt="Knives" />
             <p>Knives</p>
           </section>
         </a>
-        <a href="inventory.html" style="text-decoration: none; color: inherit">
+        <a
+          href="inventory.html?category=rifle"
+          style="text-decoration: none; color: inherit"
+        >
           <section class="menu-item">
             <img src="assets/icons/rifle.png" alt="Rifle" />
             <p>Rifle</p>
           </section>
         </a>
-        <a href="inventory.html" style="text-decoration: none; color: inherit">
+        <a
+          href="inventory.html?category=gloves"
+          style="text-decoration: none; color: inherit"
+        >
           <section class="menu-item">
             <img src="assets/icons/gloves.png" alt="Gloves" />
             <p>Gloves</p>
           </section>
         </a>
-        <a href="inventory.html" style="text-decoration: none; color: inherit">
+        <a
+          href="inventory.html?category=midtier"
+          style="text-decoration: none; color: inherit"
+        >
           <section class="menu-item">
             <img src="assets/icons/midtier.png" alt="Mid-Tier" />
             <p>Mid-Tier</p>
@@ -91,6 +106,39 @@
       document.addEventListener("click", (e) => {
         if (!toggle.contains(e.target) && !menu.contains(e.target)) {
           menu.classList.add("hidden");
+        }
+      });
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const headerRight = document.querySelector(".header-right");
+        if (user && headerRight) {
+          // Remove old if exists
+          const oldUserSpan = document.querySelector(".header-user");
+          const oldLogout = document.querySelector(".header-logout");
+          if (oldUserSpan) oldUserSpan.remove();
+          if (oldLogout) oldLogout.remove();
+          // User info
+          const userSpan = document.createElement("span");
+          userSpan.textContent = `Logged in as:\n${user.email} (${user.role})`;
+          userSpan.className = "header-user";
+          userSpan.style.marginLeft = "2rem";
+          userSpan.style.fontWeight = "normal";
+          userSpan.style.whiteSpace = "pre";
+          headerRight.appendChild(userSpan);
+          // Logout button
+          const logoutBtn = document.createElement("a");
+          logoutBtn.href = "#";
+          logoutBtn.className = "header-button header-logout";
+          logoutBtn.textContent = "Logout";
+          logoutBtn.onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          };
+          headerRight.appendChild(logoutBtn);
         }
       });
     </script>

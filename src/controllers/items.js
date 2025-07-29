@@ -4,10 +4,14 @@ import mongoose from "mongoose";
 
 /* GET /api/items */
 export async function getAll(req, res) {
-  const { category } = req.query;
+  const { category, ids } = req.query;
 
   const filter = {};
   if (category) filter.category = category;
+  if (ids) {
+    const arr = ids.split(',').filter(Boolean);
+    filter._id = { $in: arr };
+  }
 
   const items = await Item.find(filter).lean();
   res.json(items);

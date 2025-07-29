@@ -4,6 +4,7 @@ import authRouter      from "./auth.js";       // חדש
 import wishlistRouter  from "./wishlist.js";   // חדש
 import statsRouter     from "./stats.js";      // חדש
 import ordersRouter    from "./orders.js";     // חדש
+import usersRouter from "./users.js";
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.use("/auth",     authRouter);       // חדש
 router.use("/wishlist", wishlistRouter);   // חדש
 router.use("/stats",    statsRouter);      // חדש
 router.use("/orders",   ordersRouter);     // חדש
+router.use("/users", usersRouter);
 
 export default router;
