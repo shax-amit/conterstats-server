@@ -18,6 +18,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         <td>
           <a href="user-details.html?id=${u._id}"><button class="edit-btn">User Details</button></a>
           <a href="user-wishlist.html?id=${u._id}"><button class="wishlist-btn">Wishlist</button></a>
+          <a href="user-orders.html?id=${u._id}"><button class="edit-btn">Orders</button></a>
         </td>
       </tr>
     `).join("");
