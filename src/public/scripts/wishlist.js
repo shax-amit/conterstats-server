@@ -195,4 +195,4 @@ class WishlistManager {
 }
 
 // Initialize the manager
-const wishlistManager = new WishlistManager();
+window.wishlistManager = new WishlistManager();
