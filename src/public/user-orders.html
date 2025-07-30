@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>User Orders</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <section id="header">
+      <section class="header-wrapper">
+        <section class="header-left">
+          <h1>CounterStats</h1>
+        </section>
+        <section class="header-right">
+          <a href="index.html" class="header-button">Home</a>
+          <a href="login.html" class="header-button">Login</a>
+        </section>
+      </section>
+    </section>
+
+    <section style="padding: 2rem">
+      <h2>User Orders</h2>
+      <div id="loading" class="loading hidden">Loading...</div>
+      <div id="error" class="error hidden"></div>
+      <div id="orders-container"></div>
+    </section>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const params = new URLSearchParams(window.location.search);
+        const userId = params.get("id");
+        if (!userId) {
+          document.getElementById("error").textContent = "No user ID provided";
+          return;
+        }
+
+        const loadingEl = document.getElementById("loading");
+        const errorEl = document.getElementById("error");
+        const container = document.getElementById("orders-container");
+
+        try {
+          loadingEl.classList.remove("hidden");
+          const token = localStorage.getItem("token");
+          const res = await fetch(`/api/orders?userId=${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) throw new Error("Failed to fetch orders");
+          const orders = await res.json();
+          if (!orders.length) {
+            container.innerHTML = "<p>No orders found.</p>";
+            return;
+          }
+
+          container.innerHTML = orders
+            .map((ord) => {
+              const itemsList = ord.items
+                .map(
+                  (it) => `<li>${it.name} x${it.quantity} - $${it.price}</li>`
+                )
+                .join("");
+              return `
+              <div class="order-card">
+                <h3>Order #${ord._id}</h3>
+                <p>Date: ${new Date(ord.purchaseDate).toLocaleString()}</p>
+                <p>Total: $${ord.totalAmount}</p>
+                <p>Card: **** **** **** ${ord.cardLast4} (exp ${
+                ord.cardExpiry
+              })</p>
+                <ul>${itemsList}</ul>
+              </div>
+            `;
+            })
+            .join("");
+        } catch (err) {
+          errorEl.textContent = err.message;
+          errorEl.classList.remove("hidden");
+        } finally {
+          loadingEl.classList.add("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>

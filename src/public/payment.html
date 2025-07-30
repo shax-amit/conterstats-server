@@ -110,11 +110,48 @@
           )
           .join("");
       });
-      document.getElementById("payment-form").onsubmit = function (e) {
+      document.getElementById("payment-form").onsubmit = async function (e) {
         e.preventDefault();
-        document.getElementById("payment-message").textContent =
-          "Payment processed! (Demo)";
-        document.getElementById("payment-form").reset();
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Please login");
+          return;
+        }
+
+        const cardNumber = document.getElementById("card-number").value;
+        const expiry = document.getElementById("expiry").value;
+
+        // build items array
+        const itemsPayload = ids.map((id) => ({ itemId: id, quantity: 1 }));
+
+        try {
+          const res = await fetch(
+            "https://conterstats.onrender.com/api/orders",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ items: itemsPayload, cardNumber, expiry }),
+            }
+          );
+
+          if (!res.ok) {
+            const { error } = await res.json();
+            throw new Error(error || "Payment failed");
+          }
+
+          document.getElementById("payment-message").textContent =
+            "Payment processed!";
+          document.getElementById("payment-form").reset();
+
+          // redirect to orders page after short delay
+          setTimeout(() => (window.location.href = "orders.html"), 1500);
+        } catch (err) {
+          document.getElementById("payment-message").textContent = err.message;
+        }
       };
     </script>
   </body>

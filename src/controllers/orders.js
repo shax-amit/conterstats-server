@@ -5,7 +5,13 @@ import Wishlist from "../models/wishlist.js";
 // Get all orders for the logged-in user
 export const getUserOrders = async (req, res, next) => {
   try {
-    const orders = await Order.find({ userId: req.user.id })
+    // If admin provided userId param -> override
+    let targetUserId = req.user.id;
+    if (req.user.role === 'admin' && req.query.userId) {
+      targetUserId = req.query.userId;
+    }
+
+    const orders = await Order.find({ userId: targetUserId })
       .populate('items.itemId')
       .sort({ purchaseDate: -1 });
 
@@ -18,7 +24,7 @@ export const getUserOrders = async (req, res, next) => {
 // Create a new order
 export const createOrder = async (req, res, next) => {
   try {
-    const { items } = req.body;
+    const { items, cardNumber, expiry } = req.body;
     const userId = req.user.id;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -45,13 +51,20 @@ export const createOrder = async (req, res, next) => {
       totalAmount += (item.price || 0) * (orderItem.quantity || 1);
     }
 
-    // Create the order
+    // basic validation for card
+    if (!cardNumber || !expiry) {
+      return res.status(400).json({ error: 'Payment details are required' });
+    }
+
+    const last4 = String(cardNumber).replace(/\D/g, '').slice(-4);
+
     const order = new Order({
       userId,
       items: orderItems,
       totalAmount,
       purchaseDate: new Date(),
-      status: 'Completed'
+      cardLast4: last4,
+      cardExpiry: expiry,
     });
 
     await order.save();

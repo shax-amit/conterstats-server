@@ -29,6 +29,7 @@
     <section id="wishlist-section">
       <h2>User Wishlist</h2>
       <div id="wishlist-items"></div>
+      <div id="admin-actions" style="margin-top: 1rem"></div>
       <!-- Buy All button removed for admin view -->
     </section>
     <script>
@@ -87,6 +88,19 @@
             `;
           })
           .join("");
+
+        // --- Admin extra button ---
+        const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+        if (currentUser?.role === "admin") {
+          const adminDiv = document.getElementById("admin-actions");
+          const ordersBtn = document.createElement("button");
+          ordersBtn.className = "action-button";
+          ordersBtn.textContent = "View Orders";
+          ordersBtn.onclick = () => {
+            window.location.href = `user-orders.html?id=${id}`;
+          };
+          adminDiv.appendChild(ordersBtn);
+        }
       });
       // Buy All logic removed (admin does not need to purchase)
     </script>
