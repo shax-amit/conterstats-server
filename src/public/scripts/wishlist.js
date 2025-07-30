@@ -176,4 +176,23 @@ class WishlistManager {
       const response = await fetch('https://conterstats.onrender.com/api/wishlist', {
         method: 'DELETE',
         headers: {
-          'Authorization': `
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to clear wishlist');
+      }
+
+      this.wishlistItems = [];
+      this.renderWishlist();
+      this.showMessage('Wishlist cleared successfully!', 'success');
+
+    } catch (error) {
+      this.showMessage(error.message, 'error');
+    }
+  }
+}
+
+// Initialize the manager
+const wishlistManager = new WishlistManager();
