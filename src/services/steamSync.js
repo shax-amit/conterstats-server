@@ -116,5 +116,4 @@ async function syncSkinsIfNeeded() {
 }
 
 // ייצוא
-export { runSync, syncSkinsIfNeeded };
-export { fetchPriceFromSteam };
+export { runSync, syncSkinsIfNeeded, fetchPriceFromSteam, CONDITION_MAP };
