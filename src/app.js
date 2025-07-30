@@ -17,6 +17,7 @@ const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath)); // ✅ Serve static files from 'public'
 
 app.use(cors({ origin: 'https://conterstats.onrender.com' }));
+app.options('*', cors({ origin: 'https://conterstats.onrender.com' }));
 app.use(express.json());
 app.use("/api", routes);
 app.use(notFound);
