@@ -192,6 +192,46 @@ class WishlistManager {
       this.showMessage(error.message, 'error');
     }
   }
+
+  /**
+   * Navigate user to payment page with all current wishlist item ids
+   */
+  gotoPayment() {
+    if (this.wishlistItems.length === 0) {
+      this.showMessage('Your wishlist is empty', 'error');
+      return;
+    }
+
+    // Collect item ids (filter out undefined/null just in case)
+    const ids = this.wishlistItems
+      .map((it) => it._id)
+      .filter(Boolean);
+
+    if (!ids.length) {
+      this.showMessage('No valid items to purchase', 'error');
+      return;
+    }
+
+    // Redirect to payment page with ids param
+    window.location.href = `payment.html?items=${ids.join(',')}`;
+  }
+
+  /**
+   * Bind click handler to "Buy All" button
+   */
+  setupEventListeners() {
+    const buyAllBtn = document.getElementById('buy-all-btn');
+    // אם המשתמש הוא אדמין – הסתר את הכפתור לחלוטין
+    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    if (currentUser?.role === 'admin') {
+      if (buyAllBtn) buyAllBtn.style.display = 'none';
+      return; // אל תקשור מאזין
+    }
+
+    if (buyAllBtn) {
+      buyAllBtn.addEventListener('click', () => this.gotoPayment());
+    }
+  }
 }
 
 // Initialize the manager
