@@ -20,7 +20,7 @@ const TTL_MINUTES = Number.isNaN(rawTtl) ? 15 : rawTtl;
 
 // --- Rate limit handling ---
 // Delay (ms) between consecutive Steam API requests to avoid HTTP 429
-const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 1000;
+const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 5000; // default 5s
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -80,7 +80,12 @@ async function runSync() {
         console.log(`  ✔ ${marketName} → $${price.toFixed(2)}`);
       }
     } catch (err) {
-      console.error(`  ✖ ${marketName}:`, err.message);
+      if (err.response && err.response.status === 429) {
+        console.warn("  ⏳ Rate-limited by Steam – waiting 60s...");
+        await sleep(60_000);
+      } else {
+        console.error(`  ✖ ${marketName}:`, err.message);
+      }
     }
   }
 
