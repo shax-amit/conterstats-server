@@ -71,9 +71,12 @@ async function runSync() {
     );
   }
 
-  for (const it of items) {
+  for (let idx = 0; idx < items.length; idx++) {
+    const it = items[idx];
     // Respect rate-limit
     await sleep(REQUEST_DELAY_MS);
+
+    console.log(`(${idx + 1}/${items.length})`);
     const condText   = CONDITION_MAP[it.condition] || it.condition;
     const marketName = `${it.name} (${condText})`;
     console.log(`  ↪ fetching price for: "${marketName}" (DB price = $${it.price})`);
