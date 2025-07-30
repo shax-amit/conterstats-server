@@ -18,6 +18,8 @@ app.use(express.static(publicPath)); // ✅ Serve static files from 'public'
 
 app.use(cors({ origin: 'https://conterstats.onrender.com' }));
 app.use(express.json());
+// Health check root path for Render
+app.get('/', (req, res) => res.send('OK'));
 app.use("/api", routes);
 app.use(notFound);
 app.use(errorHandler);

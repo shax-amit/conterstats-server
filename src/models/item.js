@@ -8,6 +8,7 @@ const itemSchema = new mongoose.Schema(
     price:          { type: Number, required: true, min: 0 },
     units_in_stock: { type: Number, required: true, min: 0 },
     imageUrl:       { type: String },          
+    lastPriceCheck: { type: Date },
   },
   { timestamps: true }
 );
