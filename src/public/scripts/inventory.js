@@ -105,10 +105,11 @@ class InventoryManager {
     // emptyEl.classList.add('hidden'); // Removed unused variable
 
     tbody.innerHTML = this.filteredItems.map(item => {
-      const img = item.imageUrl && item.imageUrl.trim() ? item.imageUrl : `assets/items/${toSlug(item.name||'')}.png`;
+      const base = `assets/items/${toSlug(item.name||'')}`;
+      const img = item.imageUrl && item.imageUrl.trim() ? item.imageUrl : `${base}.png`;
       return `
       <tr data-id="${item._id}">
-        <td><img src="${img}" alt="${item.name}" style="width:32px;height:32px;margin-right:8px;vertical-align:middle;">${item.category}</td>
+        <td><img src="${img}" onerror="this.onerror=null;this.src='${base}.jpg'" alt="${item.name}" style="width:32px;height:32px;margin-right:8px;vertical-align:middle;">${item.category}</td>
         <td>${item.name}</td>
         <td>${item.condition}</td>
         <td>$${item.price || 'N/A'}</td>
