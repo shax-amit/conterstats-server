@@ -7,6 +7,11 @@ const CATEGORY_MAP = {
   midtier: "Mid-Tier"
 };
 
+// Helper to create filename slug
+function toSlug(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
 // Inventory management with CRUD operations
 class InventoryManager {
   constructor() {
@@ -99,9 +104,11 @@ class InventoryManager {
     tableEl.classList.remove('hidden');
     // emptyEl.classList.add('hidden'); // Removed unused variable
 
-    tbody.innerHTML = this.filteredItems.map(item => `
+    tbody.innerHTML = this.filteredItems.map(item => {
+      const img = item.imageUrl && item.imageUrl.trim() ? item.imageUrl : `assets/items/${toSlug(item.name||'')}.png`;
+      return `
       <tr data-id="${item._id}">
-        <td>${item.category}</td>
+        <td><img src="${img}" alt="${item.name}" style="width:32px;height:32px;margin-right:8px;vertical-align:middle;">${item.category}</td>
         <td>${item.name}</td>
         <td>${item.condition}</td>
         <td>$${item.price || 'N/A'}</td>
@@ -118,8 +125,7 @@ class InventoryManager {
             </button>
           ` : ''}
         </td>
-      </tr>
-    `).join('');
+      </tr>`}).join('');
   }
 
   filterItems() {
