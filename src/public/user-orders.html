@@ -119,5 +119,60 @@
         }
       });
     </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const headerRight = document.querySelector(".header-right");
+
+        // דינמיקה לכפתור Home
+        const homeBtn = document.querySelector(
+          'a.header-button[href="index.html"]'
+        );
+        if (user && user.role === "admin" && homeBtn) {
+          homeBtn.setAttribute("href", "admin-home.html");
+        }
+
+        // הסתרת Wishlist ו-Orders לאדמין
+        if (user && user.role === "admin") {
+          const wishlistBtn = document.querySelector(
+            'a.header-button[href="wishlist.html"]'
+          );
+          const ordersBtn = document.querySelector(
+            'a.header-button[href="orders.html"]'
+          );
+          if (wishlistBtn) wishlistBtn.style.display = "none";
+          if (ordersBtn) ordersBtn.style.display = "none";
+        }
+
+        // הצגת שם משתמש וכפתור Logout
+        if (user && headerRight) {
+          // Remove old if exists
+          const oldUserSpan = document.querySelector(".header-user");
+          const oldLogout = document.querySelector(".header-logout");
+          if (oldUserSpan) oldUserSpan.remove();
+          if (oldLogout) oldLogout.remove();
+
+          const userSpan = document.createElement("span");
+          userSpan.textContent = `Logged in as:\n${user.email} (${user.role})`;
+          userSpan.className = "header-user";
+          userSpan.style.marginLeft = "2rem";
+          userSpan.style.fontWeight = "normal";
+          userSpan.style.whiteSpace = "pre";
+          headerRight.appendChild(userSpan);
+
+          const logoutBtn = document.createElement("a");
+          logoutBtn.href = "#";
+          logoutBtn.className = "header-button header-logout";
+          logoutBtn.textContent = "Logout";
+          logoutBtn.onclick = (e) => {
+            e.preventDefault();
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            window.location.href = "index.html";
+          };
+          headerRight.appendChild(logoutBtn);
+        }
+      });
+    </script>
   </body>
 </html>
