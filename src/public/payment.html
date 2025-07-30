@@ -72,6 +72,8 @@
       <div id="payment-message"></div>
     </section>
     <script>
+      let selectedIds = [];
+
       async function fetchItems(ids) {
         const token = localStorage.getItem("token");
         const res = await fetch(`/api/items?ids=${ids.join(",")}`, {
@@ -86,6 +88,7 @@
         if (params.get("item")) ids = [params.get("item")];
         if (params.get("items")) ids = params.get("items").split(",");
         ids = ids.filter(Boolean);
+        selectedIds = ids; // save globally
         if (!ids.length) {
           document.getElementById("items-tbody").innerHTML =
             '<tr><td colspan="4">No items selected.</td></tr>';
@@ -123,7 +126,10 @@
         const expiry = document.getElementById("expiry").value;
 
         // build items array
-        const itemsPayload = ids.map((id) => ({ itemId: id, quantity: 1 }));
+        const itemsPayload = selectedIds.map((id) => ({
+          itemId: id,
+          quantity: 1,
+        }));
 
         try {
           const res = await fetch(
