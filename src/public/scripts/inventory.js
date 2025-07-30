@@ -65,7 +65,6 @@ class InventoryManager {
       loadingEl.classList.remove('hidden');
       errorEl.classList.add('hidden');
 
-      const response = await fetch('https://conterstats-server.onrender.com/api/items');
       
       if (!response.ok) {
         throw new Error('Failed to load inventory');
@@ -145,7 +144,7 @@ class InventoryManager {
     }
 
     try {
-      const response = await fetch('https://conterstats-server.onrender.com/api/wishlist', {
+      const response = await fetch('https://conterstats.onrender.com/api/wishlist', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +176,7 @@ class InventoryManager {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://conterstats-server.onrender.com/api/items/${itemId}`, {
+      const response = await fetch(`https://conterstats.onrender.com/api/items/${itemId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -212,7 +211,7 @@ class InventoryManager {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://conterstats-server.onrender.com/api/items', {
+      const response = await fetch('https://conterstats.onrender.com/api/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -327,4 +326,4 @@ class InventoryManager {
 
 // Initialize inventory manager
 // eslint-disable-next-line no-unused-vars
-const inventoryManager = new InventoryManager(); 
+const inventoryManager = new InventoryManager();       const response = await fetch('https://conterstats.onrender.com/api/items');

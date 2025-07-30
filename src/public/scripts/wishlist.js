@@ -30,7 +30,7 @@ class WishlistManager {
         throw new Error('Please login to view your wishlist');
       }
 
-      const response = await fetch('https://conterstats-server.onrender.com/api/wishlist', {
+      const response = await fetch('https://conterstats.onrender.com/api/wishlist', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -102,7 +102,7 @@ class WishlistManager {
     }
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://conterstats-server.onrender.com/api/wishlist/${itemId}`, {
+      const response = await fetch(`https://conterstats.onrender.com/api/wishlist/${itemId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -131,7 +131,7 @@ class WishlistManager {
   async createOrderFromWishlist() {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://conterstats-server.onrender.com/api/orders', {
+      const response = await fetch('https://conterstats.onrender.com/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -173,72 +173,7 @@ class WishlistManager {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('https://conterstats-server.onrender.com/api/wishlist', {
+      const response = await fetch('https://conterstats.onrender.com/api/wishlist', {
         method: 'DELETE',
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to clear wishlist');
-      }
-
-      this.wishlistItems = [];
-      this.renderWishlist();
-      this.showMessage('Wishlist cleared successfully', 'success');
-
-    } catch (error) {
-      this.showMessage(error.message, 'error');
-    }
-  }
-
-  setupEventListeners() {
-    const createOrderBtn = document.getElementById('create-order-btn');
-    if (createOrderBtn) {
-      createOrderBtn.addEventListener('click', () => {
-        this.createOrderFromWishlist();
-      });
-    }
-    const clearWishlistBtn = document.getElementById('clear-wishlist-btn');
-    if (clearWishlistBtn) {
-      clearWishlistBtn.addEventListener('click', () => {
-        this.clearWishlist();
-      });
-    }
-    const buyAllBtn = document.getElementById('buy-all-btn');
-    if (buyAllBtn) {
-      buyAllBtn.addEventListener('click', () => {
-        const items = this.wishlistItems
-          .map(item => item.item && item.item._id ? item.item._id : null)
-          .filter(Boolean);
-        if (!items.length) return alert('No items to buy!');
-        window.location.href = `payment.html?items=${items.join(',')}`;
-      });
-    }
-  }
-
-  showMessage(message, type = 'info') {
-    // Create a simple toast notification
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.classList.add('show');
-    }, 100);
-    
-    setTimeout(() => {
-      toast.classList.remove('show');
-      setTimeout(() => {
-        document.body.removeChild(toast);
-      }, 300);
-    }, 3000);
-  }
-}
-
-// Initialize wishlist manager
-// eslint-disable-next-line no-unused-vars
-const wishlistManager = new WishlistManager();
+          'Authorization': `

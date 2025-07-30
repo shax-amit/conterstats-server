@@ -26,7 +26,7 @@ class OrdersManager {
         throw new Error('Please login to view your orders');
       }
 
-      const response = await fetch('https://conterstats-server.onrender.com/api/orders', {
+      const response = await fetch('https://conterstats.onrender.com/api/orders', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -137,7 +137,7 @@ class OrdersManager {
 
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`https://conterstats-server.onrender.com/api/orders/${orderId}`, {
+      const response = await fetch(`https://conterstats.onrender.com/api/orders/${orderId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

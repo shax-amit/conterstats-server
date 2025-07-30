@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const tableBody = document.querySelector("#users-table tbody");
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("https://conterstats-server.onrender.com/api/users", {
+    const res = await fetch("https://conterstats.onrender.com/api/users", {
       headers: { Authorization: `Bearer ${token}` }
     });
     if (!res.ok) throw new Error("Failed to fetch users");
