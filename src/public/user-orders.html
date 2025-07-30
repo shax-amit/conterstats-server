@@ -14,9 +14,39 @@
         <section class="header-right">
           <a href="index.html" class="header-button">Home</a>
           <a href="login.html" class="header-button">Login</a>
+          <a href="wishlist.html" class="header-button">Wishlist</a>
+          <a href="orders.html" class="header-button">Orders</a>
+          <a href="#" class="header-button lang-select" id="lang-toggle"
+            >🌐 <span id="current-lang">En</span> ▼</a
+          >
         </section>
       </section>
     </section>
+    <ul id="lang-menu" class="lang-dropdown hidden">
+      <li data-lang="en">English</li>
+      <li data-lang="he">עברית</li>
+      <li data-lang="fr">Français</li>
+      <li data-lang="es">Español</li>
+    </ul>
+    <script>
+      const toggle = document.getElementById("lang-toggle");
+      const menu = document.getElementById("lang-menu");
+      const currentLang = document.getElementById("current-lang");
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        menu.classList.toggle("hidden");
+      });
+      menu.querySelectorAll("li").forEach((li) =>
+        li.addEventListener("click", () => {
+          currentLang.textContent = li.textContent;
+          menu.classList.add("hidden");
+        })
+      );
+      document.addEventListener("click", (e) => {
+        if (!toggle.contains(e.target) && !menu.contains(e.target))
+          menu.classList.add("hidden");
+      });
+    </script>
 
     <section style="padding: 2rem">
       <h2>User Orders</h2>
@@ -53,22 +83,32 @@
 
           container.innerHTML = orders
             .map((ord) => {
-              const itemsList = ord.items
+              const itemsRows = ord.items
                 .map(
-                  (it) => `<li>${it.name} x${it.quantity} - $${it.price}</li>`
+                  (it) => `
+                <div class="order-item-detail">
+                  <span class="item-name">${it.name}</span>
+                  <span class="item-quantity">x${it.quantity}</span>
+                  <span class="item-price">$${it.price}</span>
+                </div>
+            `
                 )
                 .join("");
+
               return `
-              <div class="order-card">
-                <h3>Order #${ord._id}</h3>
-                <p>Date: ${new Date(ord.purchaseDate).toLocaleString()}</p>
+              <div class="order-item" style="margin-bottom:1rem;border:1px solid #ccc;padding:1rem;border-radius:6px;background:#fff;">
+                <div class="order-header" style="display:flex;justify-content:space-between;align-items:center;">
+                  <h3>Order #${ord._id.slice(-8)}</h3>
+                  <span class="order-date">${new Date(
+                    ord.purchaseDate
+                  ).toLocaleDateString()}</span>
+                </div>
                 <p>Total: $${ord.totalAmount}</p>
                 <p>Card: **** **** **** ${ord.cardLast4} (exp ${
                 ord.cardExpiry
               })</p>
-                <ul>${itemsList}</ul>
-              </div>
-            `;
+                <div class="order-items">${itemsRows}</div>
+              </div>`;
             })
             .join("");
         } catch (err) {
