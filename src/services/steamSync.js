@@ -27,6 +27,7 @@ function sleep(ms) {
 }
 
 let lastSyncAt = 0;  // timestamp (ms) של הסנכרון האחרון
+let isSyncRunning = false;  // guard to prevent parallel runs
 
 console.log(
   `[steamSync] schedule "${SYNC_INTERVAL_CRON}", TTL-On-Demand = ${TTL_MINUTES} min`
@@ -57,6 +58,11 @@ async function fetchPriceFromSteam(marketName) {
 
 // פונקציית הסנכרון המלאה
 async function runSync() {
+  if (isSyncRunning) {
+    console.log("[steamSync] skipped – sync already running");
+    return;
+  }
+  isSyncRunning = true;
   console.log("[steamSync] sync started");
   const items = await Item.find().select("name condition price");
   if (items.length === 0) {
@@ -81,8 +87,8 @@ async function runSync() {
       }
     } catch (err) {
       if (err.response && err.response.status === 429) {
-        console.warn("  ⏳ Rate-limited by Steam – waiting 60s...");
-        await sleep(60_000);
+        console.warn("  ⏳ Rate-limited by Steam – waiting 5 min...");
+        await sleep(300_000);
       } else {
         console.error(`  ✖ ${marketName}:`, err.message);
       }
@@ -91,6 +97,7 @@ async function runSync() {
 
   lastSyncAt = Date.now();
   console.log("[steamSync] sync finished");
+  isSyncRunning = false;
 }
 
 // Cron: רישום הסנכרון הקבוע
