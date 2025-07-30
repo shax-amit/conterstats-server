@@ -138,8 +138,8 @@ class WishlistManager {
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-          items: this.wishlistItems.map(item => ({
-            itemId: item._id,
+          items: this.wishlistItems.map(entry => ({
+            itemId: entry.item?._id,
             quantity: 1
           }))
         })
@@ -204,7 +204,7 @@ class WishlistManager {
 
     // Collect item ids (filter out undefined/null just in case)
     const ids = this.wishlistItems
-      .map((it) => it._id)
+      .map((entry) => entry.item?._id)
       .filter(Boolean);
 
     if (!ids.length) {
