@@ -65,7 +65,9 @@ class InventoryManager {
       loadingEl.classList.remove('hidden');
       errorEl.classList.add('hidden');
 
-      
+      // Fetch all items from backend
+      const response = await fetch('https://conterstats.onrender.com/api/items');
+
       if (!response.ok) {
         throw new Error('Failed to load inventory');
       }
@@ -325,5 +327,4 @@ class InventoryManager {
 }
 
 // Initialize inventory manager
-// eslint-disable-next-line no-unused-vars
-const inventoryManager = new InventoryManager();       const response = await fetch('https://conterstats.onrender.com/api/items');
+window.inventoryManager = new InventoryManager();
