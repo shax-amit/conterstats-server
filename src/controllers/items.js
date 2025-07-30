@@ -4,7 +4,9 @@ import mongoose from "mongoose";
 
 /* GET /api/items */
 export async function getAll(req, res) {
+  console.log('==> [getAll] called!');
   const { category, ids } = req.query;
+  console.log('==> [getAll] query:', req.query);
 
   const filter = {};
   if (category) filter.category = category;
@@ -12,9 +14,16 @@ export async function getAll(req, res) {
     const arr = ids.split(',').filter(Boolean);
     filter._id = { $in: arr };
   }
+  console.log('==> [getAll] filter:', filter);
 
-  const items = await Item.find(filter).lean();
-  res.json(items);
+  try {
+    const items = await Item.find(filter).lean();
+    console.log('==> [getAll] items found:', items.length);
+    res.json(items);
+  } catch (err) {
+    console.error('==> [getAll] error:', err);
+    res.status(500).json({ error: 'Failed to fetch items', details: err.message });
+  }
 }
 
 /* GET /api/items/:id */
