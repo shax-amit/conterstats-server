@@ -232,6 +232,26 @@ class WishlistManager {
       buyAllBtn.addEventListener('click', () => this.gotoPayment());
     }
   }
+
+  /**
+   * Toast helper for success / error / info messages
+   */
+  showMessage(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+      toast.classList.add('show');
+    }, 50);
+
+    setTimeout(() => {
+      toast.classList.remove('show');
+      setTimeout(() => document.body.removeChild(toast), 300);
+    }, 3000);
+  }
 }
 
 // Initialize the manager

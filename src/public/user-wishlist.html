@@ -29,9 +29,7 @@
     <section id="wishlist-section">
       <h2>User Wishlist</h2>
       <div id="wishlist-items"></div>
-      <div id="wishlist-actions" style="margin-top: 2rem">
-        <button class="action-button" id="buy-all-btn">Buy All</button>
-      </div>
+      <!-- Buy All button removed for admin view -->
     </section>
     <script>
       let currentWishlistItems = [];
@@ -52,11 +50,17 @@
             "Wishlist not found.";
           return;
         }
-        const items = await res.json();
+        let items = await res.json();
+        // סינון רשומות חסרות פריט (item=null)
+        items = Array.isArray(items) ? items.filter((entry) => entry.item) : [];
         currentWishlistItems = items;
+
         if (!items.length) {
           document.getElementById("wishlist-items").textContent =
             "Wishlist is empty.";
+          // מסתיר כפתורי פעולה אם אין פריטים
+          const actions = document.getElementById("wishlist-actions");
+          if (actions) actions.style.display = "none";
           return;
         }
         document.getElementById("wishlist-items").innerHTML = items
@@ -84,13 +88,7 @@
           })
           .join("");
       });
-      document.getElementById("buy-all-btn").onclick = function () {
-        const ids = currentWishlistItems
-          .map((entry) => entry.item?._id)
-          .filter(Boolean);
-        if (!ids.length) return alert("No items to buy!");
-        window.location.href = `payment.html?items=${ids.join(",")}`;
-      };
+      // Buy All logic removed (admin does not need to purchase)
     </script>
     <script>
       const toggle = document.getElementById("lang-toggle");
