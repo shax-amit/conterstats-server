@@ -18,6 +18,13 @@ const { SYNC_INTERVAL_CRON = "5 */6 * * *" } = process.env;
 const rawTtl = parseInt(process.env.SYNC_TTL_MINUTES, 10);
 const TTL_MINUTES = Number.isNaN(rawTtl) ? 15 : rawTtl;
 
+// --- Rate limit handling ---
+// Delay (ms) between consecutive Steam API requests to avoid HTTP 429
+const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 1000;
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 let lastSyncAt = 0;  // timestamp (ms) של הסנכרון האחרון
 
@@ -59,6 +66,8 @@ async function runSync() {
   }
 
   for (const it of items) {
+    // Respect rate-limit
+    await sleep(REQUEST_DELAY_MS);
     const condText   = CONDITION_MAP[it.condition] || it.condition;
     const marketName = `${it.name} (${condText})`;
     console.log(`  ↪ fetching price for: "${marketName}" (DB price = $${it.price})`);
