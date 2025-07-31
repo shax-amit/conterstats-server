@@ -1,12 +1,12 @@
 document.addEventListener("DOMContentLoaded", async () => {
-  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const user = JSON.parse(sessionStorage.getItem("user") || "null");
   if (!user || (user.role !== "employee" && user.role !== "admin")) {
     window.location.href = "index.html";
     return;
   }
   const tableBody = document.querySelector("#users-table tbody");
   try {
-    const token = localStorage.getItem("token");
+    const token = sessionStorage.getItem("token");
     const res = await fetch("https://conterstats.onrender.com/api/users", {
       headers: { Authorization: `Bearer ${token}` }
     });

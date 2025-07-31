@@ -14,7 +14,7 @@ class WishlistManager {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const itemsEl = document.getElementById('wishlist-items');
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     try {
       loadingEl.classList.remove('hidden');
@@ -93,7 +93,7 @@ class WishlistManager {
       return;
     }
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch(`https://conterstats.onrender.com/api/wishlist/${itemId}`, {
         method: 'DELETE',
         headers: {
@@ -122,7 +122,7 @@ class WishlistManager {
 
   async createOrderFromWishlist() {
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch('https://conterstats.onrender.com/api/orders', {
         method: 'POST',
         headers: {
@@ -164,7 +164,7 @@ class WishlistManager {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch('https://conterstats.onrender.com/api/wishlist', {
         method: 'DELETE',
         headers: {
@@ -214,7 +214,7 @@ class WishlistManager {
   setupEventListeners() {
     const buyAllBtn = document.getElementById('buy-all-btn');
     // אם המשתמש הוא אדמין – הסתר את הכפתור לחלוטין
-    const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+    const currentUser = JSON.parse(sessionStorage.getItem('user') || 'null');
     if (currentUser?.role === 'admin') {
       if (buyAllBtn) buyAllBtn.style.display = 'none';
       return; // אל תקשור מאזין

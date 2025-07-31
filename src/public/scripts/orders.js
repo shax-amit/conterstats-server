@@ -22,7 +22,7 @@ class OrdersManager {
       loadingEl.classList.remove('hidden');
       errorEl.classList.add('hidden');
 
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       if (!token) {
         throw new Error('Please login to view your orders');
       }
@@ -137,7 +137,7 @@ class OrdersManager {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch(`https://conterstats.onrender.com/api/orders/${orderId}`, {
         method: 'DELETE',
         headers: {

@@ -38,7 +38,7 @@ class InventoryManager {
   }
 
   async checkAuth() {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (token) {
       try {
         // Decode JWT to get user info (basic implementation)
@@ -159,7 +159,7 @@ class InventoryManager {
   }
 
   async addToWishlist(itemId) {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     if (!token) {
       this.showMessage('Please login to add items to wishlist', 'error');
       return;
@@ -197,7 +197,7 @@ class InventoryManager {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch(`https://conterstats.onrender.com/api/items/${itemId}`, {
         method: 'DELETE',
         headers: {
@@ -232,7 +232,7 @@ class InventoryManager {
     }
 
     try {
-      const token = localStorage.getItem('token');
+      const token = sessionStorage.getItem('token');
       const response = await fetch('https://conterstats.onrender.com/api/items', {
         method: 'POST',
         headers: {
