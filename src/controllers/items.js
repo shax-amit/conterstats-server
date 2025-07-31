@@ -101,6 +101,7 @@ async function maybeRefreshPrice(doc) {
     if (p !== null) {
       doc.price = p;
       doc.lastPriceCheck = new Date();
+      console.log(`[priceRefresh] ${marketName} → $${p}`);
       await doc.save();
     }
   } catch(e) {

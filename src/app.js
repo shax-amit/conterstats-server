@@ -3,6 +3,7 @@ import cors from "cors";                         // ← הוסף את CORS
 import mongoose from "mongoose";
 import "./services/steamSync.js";
 import routes from "./routes/index.js";
+import { syncSkinsIfNeeded } from "./services/steamSync.js";
 import { MONGO_URI } from "./config.js";
 import notFound from "./middleware/notFound.js";
 import errorHandler from "./middleware/errorHandler.js";
@@ -17,6 +18,8 @@ const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath)); // ✅ Serve static files from 'public'
 
 app.use(cors({ origin: 'https://conterstats.onrender.com' }));
+// background steam price check (TTL) per request
+app.use((req,res,next)=>{ syncSkinsIfNeeded(); next(); });
 app.use(express.json());
 // Health check root path for Render
 app.get('/', (req, res) => res.send('OK'));

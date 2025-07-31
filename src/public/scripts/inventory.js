@@ -291,35 +291,6 @@ class InventoryManager {
       this.openModal();
     });
 
-    // Sync prices button (admin only)
-    const syncBtn = document.getElementById('sync-prices-btn');
-    if (syncBtn) {
-      const user = JSON.parse(localStorage.getItem('user') || 'null');
-      if (user?.role === 'admin') {
-        syncBtn.style.display = 'inline-block';
-        syncBtn.addEventListener('click', async () => {
-          syncBtn.disabled = true;
-          syncBtn.textContent = 'Syncing...';
-          try {
-            const token = localStorage.getItem('token');
-            const res = await fetch('/api/stats/sync/steam', {
-              method: 'POST',
-              headers: { Authorization: `Bearer ${token}` }
-            });
-            if (!res.ok) throw new Error('Failed to trigger sync');
-            this.showMessage('Steam sync started', 'success');
-          } catch (e) {
-            this.showMessage(e.message, 'error');
-          } finally {
-            setTimeout(()=>{
-              syncBtn.disabled=false;
-              syncBtn.textContent='Sync Prices';
-            },3000);
-          }
-        });
-      }
-    }
-
     // Modal controls
     const closeBtn = document.querySelector('.close');
     if (closeBtn) {
