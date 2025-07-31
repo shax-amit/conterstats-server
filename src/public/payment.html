@@ -75,7 +75,7 @@
       let selectedIds = [];
 
       async function fetchItems(ids) {
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`/api/items?ids=${ids.join(",")}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -116,7 +116,7 @@
       document.getElementById("payment-form").onsubmit = async function (e) {
         e.preventDefault();
 
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         if (!token) {
           alert("Please login");
           return;

@@ -48,6 +48,22 @@
       </section>
     </section>
 
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const user = JSON.parse(sessionStorage.getItem("user") || "null");
+        const headerRight = document.querySelector(".header-right");
+        if (user && headerRight) {
+          const old = document.querySelector(".header-user");
+          if (old) old.remove();
+          const span = document.createElement("span");
+          span.className = "header-user";
+          span.textContent = `Logged in as:\n${user.email} (${user.role})`;
+          span.style.marginLeft = "2rem";
+          span.style.whiteSpace = "pre";
+          headerRight.appendChild(span);
+        }
+      });
+    </script>
     <script src="scripts/orders.js"></script>
   </body>
 </html>

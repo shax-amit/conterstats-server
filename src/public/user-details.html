@@ -39,7 +39,7 @@
             "No user ID provided.";
           return;
         }
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`/api/users/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -79,7 +79,7 @@
         }
       });
       document.addEventListener("DOMContentLoaded", () => {
-        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const user = JSON.parse(sessionStorage.getItem("user") || "null");
         const headerRight = document.querySelector(".header-right");
         // דינמיקה לכפתור Home
         const homeBtn = document.querySelector(
@@ -110,8 +110,8 @@
           logoutBtn.textContent = "Logout";
           logoutBtn.onclick = (e) => {
             e.preventDefault();
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("user");
             window.location.href = "index.html";
           };
           headerRight.appendChild(logoutBtn);

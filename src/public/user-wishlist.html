@@ -42,7 +42,7 @@
             "No user ID provided.";
           return;
         }
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         const res = await fetch(`/api/wishlist?userId=${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
@@ -90,7 +90,9 @@
           .join("");
 
         // --- Admin extra button ---
-        const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+        const currentUser = JSON.parse(
+          sessionStorage.getItem("user") || "null"
+        );
         if (currentUser?.role === "admin") {
           const adminDiv = document.getElementById("admin-actions");
           const ordersBtn = document.createElement("button");
@@ -126,7 +128,7 @@
         }
       });
       document.addEventListener("DOMContentLoaded", () => {
-        const user = JSON.parse(localStorage.getItem("user") || "null");
+        const user = JSON.parse(sessionStorage.getItem("user") || "null");
         const headerRight = document.querySelector(".header-right");
         // דינמיקה לכפתור Home
         const homeBtn = document.querySelector(
@@ -157,8 +159,8 @@
           logoutBtn.textContent = "Logout";
           logoutBtn.onclick = (e) => {
             e.preventDefault();
-            localStorage.removeItem("token");
-            localStorage.removeItem("user");
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("user");
             window.location.href = "index.html";
           };
           headerRight.appendChild(logoutBtn);
@@ -169,7 +171,7 @@
       function removeFromUserWishlist(itemId) {
         const params = new URLSearchParams(window.location.search);
         const userId = params.get("id");
-        const token = localStorage.getItem("token");
+        const token = sessionStorage.getItem("token");
         fetch(`/api/wishlist/${itemId}?userId=${userId}`, {
           method: "DELETE",
           headers: { Authorization: `Bearer ${token}` },
