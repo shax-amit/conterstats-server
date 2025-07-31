@@ -6,9 +6,7 @@ import { CONDITION_MAP } from "../services/steamSync.js";
 
 /* GET /api/items */
 export async function getAll(req, res) {
-  console.log('==> [getAll] called!');
   const { category, ids } = req.query;
-  console.log('==> [getAll] query:', req.query);
 
   const filter = {};
   if (category) filter.category = category;
@@ -16,20 +14,24 @@ export async function getAll(req, res) {
     const arr = ids.split(',').filter(Boolean);
     filter._id = { $in: arr };
   }
-  console.log('==> [getAll] filter:', filter);
 
   try {
     const items = await Item.find(filter);
+    // Log how many items were loaded and list their names for debugging purposes
+    console.log(`[items] GET /api/items – fetched ${items.length} items`);
+    items.forEach((it, idx) => {
+      console.log(`  #${idx + 1}: ${it.name} (${it.condition}) $${it.price ?? 'N/A'}`);
+    });
 
     // On-demand refresh for all fetched items (max 30 in full inventory)
     for (const doc of items) {
       await maybeRefreshPrice(doc);
     }
 
-    console.log('==> [getAll] items found:', items.length);
+    // items found debug removed
     res.json(items.map((d)=>d.toObject()));
   } catch (err) {
-    console.error('==> [getAll] error:', err);
+    console.error('[items] getAll error:', err);
     res.status(500).json({ error: 'Failed to fetch items', details: err.message });
   }
 }
@@ -40,6 +42,9 @@ export async function getOne(req, res) {
     return res.status(400).json({ error: "invalid id" });
 
   let item = await Item.findById(req.params.id);
+  if (item) {
+    console.log(`[items] GET /api/items/${req.params.id} → ${item.name} (${item.condition}) $${item.price ?? 'N/A'}`);
+  }
   if (!item) return res.status(404).json({ error: "not found" });
 
   await maybeRefreshPrice(item);

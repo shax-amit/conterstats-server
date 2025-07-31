@@ -14,13 +14,7 @@ class WishlistManager {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const itemsEl = document.getElementById('wishlist-items');
-    // DEBUG: Print user and token
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
     const token = localStorage.getItem('token');
-    console.log('[DEBUG] user:', user);
-    console.log('[DEBUG] token:', token);
-    // const emptyEl = document.getElementById('empty-wishlist'); // Removed unused variable
-    // const actionsEl = document.getElementById('wishlist-actions'); // Removed unused variable
 
     try {
       loadingEl.classList.remove('hidden');
@@ -35,10 +29,7 @@ class WishlistManager {
           'Authorization': `Bearer ${token}`
         }
       });
-      // DEBUG: Print API response
       const debugText = await response.clone().text();
-      console.log('[DEBUG] /api/wishlist response:', debugText);
-
       if (!response.ok) {
         if (response.status === 401) {
           throw new Error('Please login to view your wishlist');

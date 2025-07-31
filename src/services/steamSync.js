@@ -114,6 +114,7 @@ setImmediate(() => {
 // פונקציה ל-TTL-On-Demand
 async function syncSkinsIfNeeded() {
   const ageMinutes = (Date.now() - lastSyncAt) / 1000 / 60;
+  console.log(`[steamSync] syncSkinsIfNeeded age=${ageMinutes.toFixed(1)} min (TTL=${TTL_MINUTES})`);
   if (ageMinutes >= TTL_MINUTES) {
     // לא ממתינים לתוצאה כאן: ירוץ ברקע
     runSync().catch((err) => console.error("[steamSync] on-demand error:", err));
