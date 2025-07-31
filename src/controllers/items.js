@@ -17,15 +17,18 @@ export async function getAll(req, res) {
 
   try {
     const items = await Item.find(filter);
-    // (debug log removed)
 
-    // On-demand refresh for all fetched items (max 30 in full inventory)
-    for (const doc of items) {
-      await maybeRefreshPrice(doc);
-    }
+    // Send immediately to client for fast performance
+    res.json(items.map((d) => d.toObject()));
 
-    // items found debug removed
-    res.json(items.map((d)=>d.toObject()));
+    // --- Fire-and-forget background refresh so we don't block the request ---
+    (async () => {
+      for (const doc of items) {
+        try {
+          await maybeRefreshPrice(doc);
+        } catch {/* ignore background errors */}
+      }
+    })();
   } catch (err) {
     console.error('[items] getAll error:', err);
     res.status(500).json({ error: 'Failed to fetch items', details: err.message });
