@@ -83,7 +83,7 @@ async function maybeRefreshPrice(doc) {
 
   // --- simple throttle / backoff ---
   const DELAY = 5000; // 5s between Steam requests
-  const BACKOFF = 300000; // 5 min after 429
+  const BACKOFF = 10000; // 10 s after 429
   if (!global.lastSteamCall) global.lastSteamCall = 0;
   if (!global.steamBackoffUntil) global.steamBackoffUntil = 0;
 
@@ -105,7 +105,7 @@ async function maybeRefreshPrice(doc) {
     }
   } catch(e) {
     if (e.response && e.response.status === 429) {
-      console.warn('[priceRefresh] 429 – enter 5-min backoff');
+      console.warn('[priceRefresh] 429 – enter 10s backoff');
       global.steamBackoffUntil = Date.now() + BACKOFF;
     } else {
       console.warn('[priceRefresh] error:', e.message);

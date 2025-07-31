@@ -90,8 +90,8 @@ async function runSync() {
       }
     } catch (err) {
       if (err.response && err.response.status === 429) {
-        console.warn("  ⏳ Rate-limited by Steam – waiting 5 min...");
-        await sleep(300_000);
+        console.warn("  ⏳ Rate-limited by Steam – waiting 10s...");
+        await sleep(10_000);
       } else {
         console.error(`  ✖ ${marketName}:`, err.message);
       }
