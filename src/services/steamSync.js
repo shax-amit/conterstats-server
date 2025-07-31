@@ -20,7 +20,7 @@ const TTL_MINUTES = Number.isNaN(rawTtl) ? 15 : rawTtl;
 
 // --- Rate limit handling ---
 // Delay (ms) between consecutive Steam API requests to avoid HTTP 429
-const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 20000; // default 20s
+const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 30000; // default 30s
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -114,7 +114,6 @@ setImmediate(() => {
 // פונקציה ל-TTL-On-Demand
 async function syncSkinsIfNeeded() {
   const ageMinutes = (Date.now() - lastSyncAt) / 1000 / 60;
-  console.log(`[steamSync] syncSkinsIfNeeded age=${ageMinutes.toFixed(1)} min (TTL=${TTL_MINUTES})`);
   if (ageMinutes >= TTL_MINUTES) {
     // לא ממתינים לתוצאה כאן: ירוץ ברקע
     runSync().catch((err) => console.error("[steamSync] on-demand error:", err));

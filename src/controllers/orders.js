@@ -1,6 +1,40 @@
 import Order from "../models/order.js";
 import Item from "../models/item.js";
 import Wishlist from "../models/wishlist.js";
+import { fetchPriceFromSteam, CONDITION_MAP } from "../services/steamSync.js";
+
+// Helper: refresh price if older than 1h (similar logic to items controller)
+async function refreshPriceIfStale(item) {
+  const ONE_HOUR = 60 * 60 * 1000;
+  const needs = !item.lastPriceCheck || (Date.now() - item.lastPriceCheck.getTime()) > ONE_HOUR;
+  if (!needs) return;
+
+  const DELAY = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 30000; // 30s throttle
+  const BACKOFF = 60000;
+  if (!global.lastSteamCall) global.lastSteamCall = 0;
+  if (!global.steamBackoffUntil) global.steamBackoffUntil = 0;
+
+  const now = Date.now();
+  if (now < global.steamBackoffUntil) return;
+  const wait = Math.max(0, DELAY - (now - global.lastSteamCall));
+  if (wait) await new Promise(r => setTimeout(r, wait));
+
+  const condText = CONDITION_MAP[item.condition] || item.condition;
+  const marketName = `${item.name} (${condText})`;
+  try {
+    const p = await fetchPriceFromSteam(marketName);
+    global.lastSteamCall = Date.now();
+    if (p !== null) {
+      item.price = p;
+      item.lastPriceCheck = new Date();
+      await item.save();
+    }
+  } catch (e) {
+    if (e.response && e.response.status === 429) {
+      global.steamBackoffUntil = Date.now() + BACKOFF;
+    }
+  }
+}
 
 // Get all orders for the logged-in user
 export const getUserOrders = async (req, res, next) => {
@@ -37,6 +71,7 @@ export const createOrder = async (req, res, next) => {
 
     for (const orderItem of items) {
       const item = await Item.findById(orderItem.itemId);
+      await refreshPriceIfStale(item);
       if (!item) {
         return res.status(404).json({ error: `Item ${orderItem.itemId} not found` });
       }

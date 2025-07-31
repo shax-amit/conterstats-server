@@ -17,8 +17,7 @@ export async function getAll(req, res) {
 
   try {
     const items = await Item.find(filter);
-    const total = items.reduce((sum, it) => sum + (typeof it.price === 'number' ? it.price : 0), 0).toFixed(2);
-    console.log(`[items] GET /api/items – fetched ${items.length} items, total value $${total}`);
+    // (debug log removed)
 
     // On-demand refresh for all fetched items (max 30 in full inventory)
     for (const doc of items) {
@@ -39,9 +38,7 @@ export async function getOne(req, res) {
     return res.status(400).json({ error: "invalid id" });
 
   let item = await Item.findById(req.params.id);
-  if (item) {
-    console.log(`[items] GET /api/items/${req.params.id} → ${item.name} (${item.condition}) $${item.price ?? 'N/A'}`);
-  }
+  // (debug log removed)
   if (!item) return res.status(404).json({ error: "not found" });
 
   await maybeRefreshPrice(item);
@@ -84,7 +81,7 @@ async function maybeRefreshPrice(doc) {
   if (!needs) return;
 
   // --- simple throttle / backoff ---
-  const DELAY = 20000; // 20s between Steam requests
+  const DELAY = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 30000; // 30s between Steam requests
   const BACKOFF = 60000; // 60 s after 429
   if (!global.lastSteamCall) global.lastSteamCall = 0;
   if (!global.steamBackoffUntil) global.steamBackoffUntil = 0;
