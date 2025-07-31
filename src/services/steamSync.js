@@ -20,7 +20,7 @@ const TTL_MINUTES = Number.isNaN(rawTtl) ? 15 : rawTtl;
 
 // --- Rate limit handling ---
 // Delay (ms) between consecutive Steam API requests to avoid HTTP 429
-const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 5000; // default 5s
+const REQUEST_DELAY_MS = parseInt(process.env.SYNC_REQUEST_DELAY_MS, 10) || 20000; // default 20s
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -64,7 +64,7 @@ async function runSync() {
   }
   isSyncRunning = true;
   console.log("[steamSync] sync started");
-  const items = await Item.find().select("name condition price");
+  const items = await Item.find().sort({ price: 1 }).select("name condition price");
   if (items.length === 0) {
     console.warn(
       "[steamSync] no items found in DB – did you run `npm run seed:all`?"

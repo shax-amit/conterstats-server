@@ -82,8 +82,8 @@ async function maybeRefreshPrice(doc) {
   if (!needs) return;
 
   // --- simple throttle / backoff ---
-  const DELAY = 5000; // 5s between Steam requests
-  const BACKOFF = 10000; // 10 s after 429
+  const DELAY = 20000; // 20s between Steam requests
+  const BACKOFF = 60000; // 60 s after 429
   if (!global.lastSteamCall) global.lastSteamCall = 0;
   if (!global.steamBackoffUntil) global.steamBackoffUntil = 0;
 
