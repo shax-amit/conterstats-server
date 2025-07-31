@@ -119,6 +119,15 @@
 
         <div class="search-section">
           <input type="text" id="search-input" placeholder="Search items..." />
+
+          <!-- Sort dropdown -->
+          <label for="sort-select" style="margin-left: 1rem">Sort by:</label>
+          <select id="sort-select">
+            <option value="name-asc">Name A → Z</option>
+            <option value="name-desc">Name Z → A</option>
+            <option value="price-asc">Price Low → High</option>
+            <option value="price-desc">Price High → Low</option>
+          </select>
         </div>
 
         <div class="admin-controls" id="admin-controls" style="display: none">

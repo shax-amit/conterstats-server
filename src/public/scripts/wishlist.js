@@ -79,15 +79,14 @@ class WishlistManager {
       const it = item.item || {};
       // Use the item ObjectId for removal, fallback to 'null' if missing
       const removeId = it._id ? it._id : 'null';
-      const base = `assets/items/${toSlug(it.name||'')}`;
-      const imageSrc = it.imageUrl && it.imageUrl.trim() ? it.imageUrl : `${base}.png`;
+      const imageSrc = it.imageUrl && it.imageUrl.trim() ? it.imageUrl : `assets/items/${toSlug(it.name||'')}.jpg`;
       return `
         <div class="wishlist-item" data-id="${removeId}">
           <div class="item-info">
             <h3>${it.name || 'Unknown Item'}</h3>
             <p class="category">${it.category || ''}</p>
             <p class="price">$${it.price != null ? it.price : 'N/A'}</p>
-            ${it.imageUrl ? `<img src="${imageSrc}" onerror="this.onerror=null;this.src='${base}.jpg'" alt="${it.name}" class="item-image" />` : ''}
+            ${it.imageUrl ? `<img src="${imageSrc}" alt="${it.name}" class="item-image" />` : ''}
           </div>
           <div class="item-actions">
             <button class="remove-btn" onclick="wishlistManager.removeItem('${removeId}')">Remove</button>

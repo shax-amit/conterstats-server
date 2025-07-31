@@ -21,11 +21,9 @@ export async function getAll(req, res) {
   try {
     const items = await Item.find(filter);
 
-    // On-demand refresh only when client ביקש פריטים ספציפיים (ids) או קטגוריה מצומצמת (<10)
-    if (items.length <= 10) {
-      for (const doc of items) {
-        await maybeRefreshPrice(doc);
-      }
+    // On-demand refresh for all fetched items (max 30 in full inventory)
+    for (const doc of items) {
+      await maybeRefreshPrice(doc);
     }
 
     console.log('==> [getAll] items found:', items.length);

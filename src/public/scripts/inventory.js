@@ -105,11 +105,10 @@ class InventoryManager {
     // emptyEl.classList.add('hidden'); // Removed unused variable
 
     tbody.innerHTML = this.filteredItems.map(item => {
-      const base = `assets/items/${toSlug(item.name||'')}`;
-      const img = item.imageUrl && item.imageUrl.trim() ? item.imageUrl : `${base}.png`;
+      const img = item.imageUrl && item.imageUrl.trim() ? item.imageUrl : `assets/items/${toSlug(item.name||'')}.jpg`;
       return `
       <tr data-id="${item._id}">
-        <td><img src="${img}" onerror="this.onerror=null;this.src='${base}.jpg'" alt="${item.name}" style="width:32px;height:32px;margin-right:8px;vertical-align:middle;">${item.category}</td>
+        <td><img src="${img}" alt="${item.name}" style="width:32px;height:32px;margin-right:8px;vertical-align:middle;">${item.category}</td>
         <td>${item.name}</td>
         <td>${item.condition}</td>
         <td>$${item.price || 'N/A'}</td>
@@ -133,7 +132,9 @@ class InventoryManager {
     const categoryFilter = document.getElementById('category-filter').value;
     const searchTerm = document.getElementById('search-input').value.toLowerCase();
 
-    this.filteredItems = this.items.filter(item => {
+    const sort = document.getElementById('sort-select').value;
+
+    let arr = this.items.filter(item => {
       const matchesCategory = !categoryFilter || item.category === categoryFilter;
       const matchesSearch = !searchTerm || 
         item.name.toLowerCase().includes(searchTerm) ||
@@ -142,6 +143,18 @@ class InventoryManager {
       return matchesCategory && matchesSearch;
     });
 
+    // Apply sort
+    arr = arr.sort((a,b)=>{
+      switch(sort){
+        case 'name-asc': return a.name.localeCompare(b.name);
+        case 'name-desc': return b.name.localeCompare(a.name);
+        case 'price-asc': return (a.price||0) - (b.price||0);
+        case 'price-desc': return (b.price||0) - (a.price||0);
+        default: return 0;
+      }
+    });
+
+    this.filteredItems = arr;
     this.renderItems();
   }
 
@@ -265,6 +278,11 @@ class InventoryManager {
     });
 
     document.getElementById('search-input').addEventListener('input', () => {
+      this.filterItems();
+    });
+
+    // Sort
+    document.getElementById('sort-select').addEventListener('change', () => {
       this.filterItems();
     });
 
