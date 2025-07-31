@@ -106,6 +106,11 @@ async function runSync() {
 // Cron: רישום הסנכרון הקבוע
 cron.schedule(SYNC_INTERVAL_CRON, runSync, { timezone: "UTC" });
 
+// Kick-off sync once at server startup (non-blocking)
+setImmediate(() => {
+  runSync().catch((err) => console.error("[steamSync] first-sync error:", err));
+});
+
 // פונקציה ל-TTL-On-Demand
 async function syncSkinsIfNeeded() {
   const ageMinutes = (Date.now() - lastSyncAt) / 1000 / 60;
