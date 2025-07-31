@@ -17,11 +17,8 @@ export async function getAll(req, res) {
 
   try {
     const items = await Item.find(filter);
-    // Log how many items were loaded and list their names for debugging purposes
-    console.log(`[items] GET /api/items – fetched ${items.length} items`);
-    items.forEach((it, idx) => {
-      console.log(`  #${idx + 1}: ${it.name} (${it.condition}) $${it.price ?? 'N/A'}`);
-    });
+    const total = items.reduce((sum, it) => sum + (typeof it.price === 'number' ? it.price : 0), 0).toFixed(2);
+    console.log(`[items] GET /api/items – fetched ${items.length} items, total value $${total}`);
 
     // On-demand refresh for all fetched items (max 30 in full inventory)
     for (const doc of items) {
