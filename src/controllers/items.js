@@ -81,16 +81,34 @@ async function maybeRefreshPrice(doc) {
   const needs = !doc.lastPriceCheck || (Date.now() - doc.lastPriceCheck.getTime()) > ONE_HOUR;
   if (!needs) return;
 
+  // --- simple throttle / backoff ---
+  const DELAY = 5000; // 5s between Steam requests
+  const BACKOFF = 300000; // 5 min after 429
+  if (!global.lastSteamCall) global.lastSteamCall = 0;
+  if (!global.steamBackoffUntil) global.steamBackoffUntil = 0;
+
+  const now = Date.now();
+  if (now < global.steamBackoffUntil) return; // still in backoff window
+
+  const wait = Math.max(0, DELAY - (now - global.lastSteamCall));
+  if (wait) await new Promise(r => setTimeout(r, wait));
+
   const condText = CONDITION_MAP[doc.condition] || doc.condition;
   const marketName = `${doc.name} (${condText})`;
   try {
     const p = await fetchPriceFromSteam(marketName);
+    global.lastSteamCall = Date.now();
     if (p !== null) {
       doc.price = p;
       doc.lastPriceCheck = new Date();
       await doc.save();
     }
   } catch(e) {
-    console.warn('[priceRefresh] error:', e.message);
+    if (e.response && e.response.status === 429) {
+      console.warn('[priceRefresh] 429 – enter 5-min backoff');
+      global.steamBackoffUntil = Date.now() + BACKOFF;
+    } else {
+      console.warn('[priceRefresh] error:', e.message);
+    }
   }
 }
