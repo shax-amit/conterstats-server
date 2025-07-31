@@ -14,6 +14,7 @@ class OrdersManager {
     const loadingEl = document.getElementById('loading');
     const errorEl = document.getElementById('error');
     const ordersEl = document.getElementById('orders-list');
+    // eslint-disable-next-line no-unused-vars
     const emptyEl = document.getElementById('empty-orders');
     const summaryEl = document.getElementById('order-summary');
 
@@ -148,13 +149,10 @@ class OrdersManager {
         throw new Error('Failed to cancel order');
       }
 
-      // Update local order status
-      const orderIndex = this.orders.findIndex(order => order._id === orderId);
-      if (orderIndex !== -1) {
-        this.orders[orderIndex].status = 'Cancelled';
-        this.renderOrders();
-        this.renderOrderSummary();
-      }
+      // Remove order from local array
+      this.orders = this.orders.filter(o => o._id !== orderId);
+      this.renderOrders();
+      this.renderOrderSummary();
 
       this.showMessage('Order cancelled successfully', 'success');
 
@@ -189,4 +187,5 @@ class OrdersManager {
 }
 
 // Initialize orders manager
+// eslint-disable-next-line no-unused-vars
 const ordersManager = new OrdersManager(); 
